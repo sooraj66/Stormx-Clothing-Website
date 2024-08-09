@@ -1,0 +1,75 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static '.css' %}">{% endblock %}
+
+{% block title %}Cart{% endblock %}
+
+{% block content %}
+    <!-- content start -->
+    <div class="container my-5">
+        <h3>Shopping Cart</h3><br>
+        <div class="row">
+            <div class="col-12 col-md-8 order-2 order-md-1">
+
+    {% for i in cart_items %}
+                <div class="p-4 mb-4 border">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <a href="#" class="text-dark text-decoration-none flex-grow-1">{{i.cloth_item.item_name}}</a>
+                        <button type="button" class="btn btn-light p-1" data-toggle="modal" data-target="#removeProductModal" data-pid="000000060369985005" data-name="Slim Fit 360 Flex Jeans" data-action="/on/demandware.store/Sites-mnsindia-Site/en_IN/Cart-RemoveProductLineItem" data-uuid="60befc535ea246294c88282e28" aria-label="remove" data-productstroke="T17/1389S">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <img src="{{i.cloth_item.images.first.image_url.url}}" alt="Polo shirt" class="img-fluid" style="width: 100px;">
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-1">Size: small</p>
+                            <p class="mb-1">Color: Beige green</p>
+                            <p class="mb-3">In stock</p>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="mb-1">Price</p>
+                                    <p>${{i.cloth_item.price}}</p>
+                                </div>
+                                <div>
+                                    <label for="quantity" class="form-label">Qty:</label>
+                                    <select class="form-control w-auto d-inline-block" id="quantity" name="quantity">
+                                        <option selected>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                        <option>6</option>
+                                        <option>7</option>
+                                        <option>8</option>
+                                        <option>9</option>
+                                        <option>10</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <p class="mb-1">Total</p>
+                                    <p>₹3,499.00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+            <div class="col-12 col-md-4 order-1 order-md-2 mb-4 mb-md-0">
+                <div class="p-4 border">
+                    <p><strong>Shipping:</strong> Standard delivery</p>
+                    <p><strong>Shipping cost:</strong> Free delivery</p>
+                    <p><strong>Tax:</strong></p>
+                    <p><strong>Total:</strong> $300</p>
+                    <button class="btn btn-primary w-100">Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- content end -->
+{% endblock %}

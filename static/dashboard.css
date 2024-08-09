@@ -1,0 +1,9 @@
+.content {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.page.active {
+    display: block;
+}

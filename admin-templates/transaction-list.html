@@ -1,0 +1,50 @@
+{% extends 'admintemplate.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static 'transaction-list.css' %}">{% endblock %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div id="transactions" class="page">
+                    <div class="transaction-header">
+                        <h2>Transactions</h2>
+                        <div class="search-bar">
+                            <input type="text" placeholder="Search">
+                            <button>Search</button>
+                        </div>
+                        <div class="show-options">
+                            <label for="show">Show</label>
+                            <select id="show">
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <label for="date">Date</label>
+                            <input type="date" id="date">
+                        </div>
+                    </div>
+                    <table class="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Paid</th>
+                                <th>Method</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#134</td>
+                                <td>$294.00</td>
+                                <td><img src="mastercard.png" alt="Mastercard"> Master card</td>
+                                <td>16.12.2020, 14:21</td>
+                                <td><a href="/transaction-list/transaction-details/"><button>View</button></a></td>
+                            </tr>
+                            <!-- Add more rows as needed -->
+                        </tbody>
+                    </table>
+            </div>
+{% endblock %}
+
+{% block script %}{% endblock %}

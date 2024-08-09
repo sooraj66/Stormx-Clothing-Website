@@ -1,0 +1,28 @@
+{% extends 'admintemplate.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static 'add-product.css' %}">{% endblock %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div id="categories" class="page">
+                <h2>Create Categories </h2>
+                <form  method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label for="">Category title</label>
+                    <input type="text" id="categoryname" name="categoryName" placeholder="Title" value="{{data.category_name}}" required>
+
+                    <label for="desc">Description</label>
+                    <textarea name="category_desc" id="desc" placeholder="Type here"></textarea>
+
+                    <label for="images">Images</label>
+                    <div id="images">
+                        <input name="categoryImg" type="file" placeholder="upload" value="{{data.category_img}}">
+                    </div>
+
+                    <button type="submit">Submit Category</button>
+                </form>
+            </div>
+{% endblock %}
+
+{% block script %}{% endblock %}

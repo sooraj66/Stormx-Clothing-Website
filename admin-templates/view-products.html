@@ -1,0 +1,46 @@
+{% extends 'admintemplate.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static '.css' %}">{% endblock %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div id="product-list" class="page">
+                <div>
+                    <h2 class="mb-2">Category</h2>
+                    <div class="row p-3" style="gap: 1rem;">
+                        <form action="/viewallproducts" method="post" class="col-1 p-0">
+                                {% csrf_token %}
+                                <button type="submit" class="btn bg-primary text-white col-12" name="viewAll" value="">View All</button>
+                            </form>
+                        {% for i in category %}
+                            <form action="/category/{{i.category_id}}" method="post" class="col-1 p-0">
+                                {% csrf_token %}
+                                <button type="submit" class="btn bg-primary text-white col-12" value="{{i.category_id}}">{{i.category_name}}</button>
+                            </form>
+                        {% endfor %}
+                    </div>
+                </div>
+                <h2>Products Grid</h2>
+                <div class="row" style="column-gap:1rem;">
+                    {% for i in products %}
+                    <div class="card p-0 border-0" style="width: 13rem;">
+                        {% for image in i.images.all %}
+                            {% if forloop.first %}
+                                <img src="{{image.image_url.url}}" class="card-img-top" alt="...">
+                            {% endif %}
+                        {% endfor %}
+                        <div class="card-body p-0">
+                          <h5 class="card-title">{{i.item_name}}</h5>
+                          <p class="card-text text-truncate">{{i.description}}</p>
+                          <p><b>Rs {{i.price}}</b></p>
+                        </div>
+                      </div>
+                    {% endfor %}
+                    <!-- Repeat product cards as needed -->
+                </div>
+            </div>
+
+{% endblock %}
+
+{% block script %}{% endblock %}

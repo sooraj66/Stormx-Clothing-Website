@@ -1,0 +1,348 @@
+
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-brand, .navbar-brand-centered{
+            letter-spacing: -4px;
+            font-weight: 400;
+            font-size: 25px;
+            color: #282828;
+        }
+        .navbar-brand-centered {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .navbar-nav.ms-auto {
+            margin-left: auto;
+        }
+        .navbar-collapse {
+            justify-content: flex-end;
+        }
+        @media (max-width: 992px) {
+            .navbar-brand-centered {
+                position: static;
+                transform: none;
+            }
+            .navbar-collapse {
+                background-color: #ffffff;
+                position: fixed;
+                top: 0;
+                right: -250px;
+                height: 100%;
+                width: 250px;
+                padding-top: 60px;
+                transition: right 0.3s;
+            }
+            .navbar-collapse.show {
+                right: 0;
+            }
+        }
+        .nav-link{
+            font-size: 16px;
+            color: #282828;
+            text-decoration: none;
+            transition: text-decoration 0.5s;
+        }
+        .nav-link:hover{
+            text-decoration: underline;
+        }
+        .img-container{
+            background-image: url("https://images.unsplash.com/photo-1528977695568-bd5e5069eb61?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+            background-size: cover;
+            background-position: center;
+            height: 550px;
+            padding: 0;
+            overflow: hidden;
+            object-fit:cover;
+        }
+        
+        .title{
+            position: relative;
+            top:230px;
+            left: 100px;
+        }
+        @media (min-width : 1100px){
+            .title > h1{
+            width: 30px;
+            font-size: 80px;
+            color: rgb(255, 255, 255);
+            text-shadow: #282828 0px 3px 10px;
+            line-height: 70px;
+        }
+        .span1,.span2{
+            margin-left: 90px;
+        }
+        }
+        
+        .top-btn{
+            position: relative;
+            padding: 2px 20px;
+            font-size: 30px;
+            top: 240px;
+            left: 180px;
+            background-color: #282828;
+        }
+        @media (min-width : 500px){
+            .title{
+            position: relative;
+            top:270px;
+            left: 100px;
+        }
+            .title > h1{
+            width: auto;
+            font-size: 55px;
+            color: rgb(255, 255, 255);
+            text-shadow: #282828 0px 3px 10px;
+            line-height: 60px;
+        }
+        .span1,.span2{
+            margin-left: 60px;
+        }
+        .top-btn{
+            padding: 2px 10px;
+            top: 280px;
+        }
+        }
+
+        @media(max-width:450px){
+            .title{
+            position: relative;
+            top:55%;
+            left: 5%;
+        }
+            .title > h1{
+            width: auto;
+            font-size: 40px;
+            color: rgb(255, 255, 255);
+            text-shadow: #282828 0px 3px 10px;
+            line-height: 35px;
+        }
+        .span1,.span2{
+            margin-left: 60px;
+        }
+        .top-btn{
+            padding: 2px 10px;
+            top: 58%;
+            font-size: 20px;
+            left: 20%;
+        }
+        }
+
+        /* @media(min-width:450px){
+            .title{
+            position: relative;
+            top:55%;
+            left: 5%;
+        }
+            .title > h1{
+            width: auto;
+            font-size: 50px;
+            color: rgb(255, 255, 255);
+            text-shadow: #282828 0px 3px 10px;
+            line-height: 45px;
+        }
+        .span1,.span2{
+            margin-left: 60px;
+        }
+        .top-btn{
+            padding: 2px 10px;
+            top: 58%;
+            font-size: 25px;
+            left: 20%;
+        }
+        }
+         */
+         .logo-container {
+            /* justify-content: space-evenly;
+            align-items: center; */
+            padding:0 0;
+            background-color: #ffffff;
+        }
+        .logo-container img {
+            max-height: 50px;
+            max-width: 100px;
+        }
+
+        /* offer_div start
+            .offer_div{
+                background-color: #282828;
+                width: 90%;
+                max-width: 90%;
+                padding: 15px 0 15px 120px
+            }
+            .offer-btn{
+                margin: auto;
+            }
+         offer_div end */
+        
+
+        /* category start */
+            .category-subdiv{
+                background-size: cover;
+                background-position: center;
+                height: 20rem;
+                transition: transform 0.5s ease;
+                
+            }
+            .category-subdiv:hover{
+                transform: scale(1.1);
+
+        /* category end */
+
+
+        /* summer start */
+        /* .summer{
+            position: relative;
+            display: grid;
+            grid-template-columns: 102px 102px 102px 102px 102px 102px 102px 102px 102px 102px 102px ;
+            grid-template-rows: 100px 100px 100px 100px 100px 100px;
+            background-color: rgba(255, 0, 0, 0);
+        }
+        .img-container-summer{
+            background-image: url('https://www.marksandspencer.in/on/demandware.static/-/Sites-mnsindia-Library/default/dwe2cf1107/2024/Summerlaunch/Web/Strip-SUMbyMNS-MenSML.jpg');
+            grid-area: 1/1/5/9;
+            background-size: cover;
+            background-position: center;
+        }
+        .featured{
+                position: absolute;
+                top: 60%;
+                right: 0px;
+                background-color: rgba(255, 255, 0, 0);
+                font-size: 70px;
+                transform: rotate(-90deg);
+                transform-origin: left top;
+                font-weight: 500;
+        }
+        .text{
+            position: absolute;
+            width: 10rem;
+            height: 10px;
+            text-wrap: wrap;
+            font-size: 30px;
+            top:20%;
+            right: 60px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .embrace{
+            grid-area: 5/1/6/9;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            align-items: center;
+        }
+        .embrace >h3{
+            font-size: 2rem;
+            letter-spacing: 5px;
+        }
+        */
+        /* .btn-embrace{
+            grid-area: 5/9/6/11;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+        } */
+        .btn{
+            
+            background-color: #282828;
+            color: white;
+            transition: transform 0.5s ease;
+           
+        }
+        .btn:hover{
+            background-color: #282828;
+            color: white;
+            transform: scale(1.1);
+        }
+        /* summer end */
+
+
+        /* trending now start */
+        .container{
+            display: flex;
+            justify-content: center;
+        }
+        .trending{
+            position: relative;
+            display: grid;
+            grid-template-columns: 102px 102px 102px 102px 102px 102px 102px 102px 102px 102px 102px 102px 102px;
+            grid-template-rows: 100px 100px 100px 100px 100px 100px;
+            background-color: rgba(255, 0, 0, 0);
+        }
+       /* .img-container-trending{
+            z-index: 1;
+            grid-area: 1/4/7/13;
+            background-image: url(stylish-young-handsome-man-out-town.png);
+            background-size: cover;
+            background-position: center;*/
+        }
+        .shape-circle{
+            z-index: 0;
+            border-radius: 50%;
+            grid-area: 2/8/6/11;
+            height: 500px;
+            width: 500px;
+            background-color: rgba(241, 214, 193, 1);
+        }
+        .title-trending, .title-trending>h3{
+            grid-area: 2/4/3/8;
+            font-size: 40px;
+        }
+        .offer, .offer > h2{
+            grid-area: 4/4/7/8;
+            font-size: 50px;
+        }
+        .brands{
+            position: absolute;
+            grid-area: 5/4/7/8;
+            font-size: 40px;
+            top: -23%;
+        }
+        .heading{
+            grid-area: 1 / 1 / 6 / 2;
+            transform: rotate(-90deg);
+            /* transform: scaleY(-1); */
+            width: max-content;
+            position: absolute;
+            top: 53%;
+            left: 0%;
+        }
+        .btn-trending{
+            grid-area: 5 / 4 / 7 / 5;
+            font-size: 31px;
+            position: absolute;
+            top: 20px;
+            border-radius: 19px;
+        }
+        .btn-trending > button{
+            background-color: #282828;
+            color: white;
+            padding: 0px 10px 6px 10px;
+            width: max-content;
+            border-radius: 7px;
+        }
+        .stormx1{
+            grid-area: 1/6/2/13;
+        }
+        .stormx2{
+            grid-area: 5 / 1 / 7 / 9;
+        }
+        .stormx1 > h1{
+            font-size: 12rem;
+            opacity: 0.2;
+        }
+        .stormx2 > h1{
+            font-size: 12rem;
+            opacity: 0.2;
+        }
+    
+        
+        /* trending now end */
+
+/* Add any additional styles for the offcanvas sidebar here */
+
+

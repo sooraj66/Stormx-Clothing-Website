@@ -1,0 +1,14 @@
+{% extends 'admintemplate.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static 'dashboard.css' %}">{% endblock %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div id="dashboard" class="page active">
+    <h1>Welcome,{{user_data.admin_username}}</h1>
+    <p>{{user_data.admin_mail}}</p>
+</div>
+{% endblock %}
+
+{% block script %}{% endblock %}

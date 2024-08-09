@@ -1,0 +1,41 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static 'signup_user.css' %}">{% endblock %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+<main class="main-content d-flex">
+    <div class="img-container  d-none d-md-block" style="height: 20%; width: 39%;">
+        <img src="static/images/loginpageimg.avif" alt="" class="img-fluid" style="max-height: 100%; width: 100%;">
+    </div>
+    <div class="d-flex  justify-content-center align-items-center" style="max-height: 100%; width: 60%; flex-direction: column;">
+<div class="login-container ">
+    <div class="login-box">
+        <h2>Sign Up</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="textbox">
+                <input type="text" placeholder="Admin Username" name="admin_username" required>
+            </div>
+            <div class="textbox">
+                <input type="email" placeholder="Admin Email" name="admin_email" required>
+            </div>
+            <div class="textbox">
+                <input type="password" placeholder="Admin Password" name="admin_password" required>
+            </div>
+            <button type="submit" class="btn">Sign Up</button>
+            <p>or sign up with</p>
+            <div class="social">
+                <button type="button" class="btn social-btn">Facebook</button>
+                <button type="button" class="btn social-btn">Google</button>
+            </div>
+            <p>Already have an account? <a href="login-page.html">Log In</a></p>
+        </form>
+    </div>
+</div>
+    </div>
+</main>
+{% endblock %}
+
+{% block script %}<script src="{% static 'login.js' %}"></script>{% endblock%}

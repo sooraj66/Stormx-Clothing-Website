@@ -1,0 +1,184 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block meta %}
+<link rel="stylesheet" href="{% static '' %}">
+<style>
+        .payment-option {
+            display: none;
+        }
+        .payment-option.active {
+            display: block;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}topwears{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top:5rem;">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-12 col-md-8">
+                <!-- Login Section -->
+                <div class="p-3 mb-3 border rounded">
+                    <h5 class="mb-1">LOGIN</h5>
+                    <p>+919961304977</p>
+                    <button class="btn btn-outline-primary btn-sm">CHANGE</button>
+                </div>
+
+                <!-- Delivery Address Section -->
+                <div class="p-3 mb-3 border rounded">
+                    <h5 class="mb-1">DELIVERY ADDRESS</h5>
+                    <p>Sooraj --, Chanthaparambil road, kureekkad, Kureekkad, Kerala - 682305</p>
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addressModal">CHANGE</button>
+                </div>
+
+                <!-- Order Summary Section -->
+                <div class="p-3 mb-3 border rounded">
+                    <h5 class="mb-3">ORDER SUMMARY</h5>
+                    <div class="mb-3">
+                        <p class="mb-1">Pay Using SuperCoins</p>
+                        <p>Balance: 52 <span class="badge bg-warning">Save ₹40 using 40 SuperCoins</span></p>
+                        <button class="btn btn-primary btn-sm">APPLY</button>
+                    </div>
+                    <div class="d-flex align-items-center mb-3 border p-2">
+                        <img src="{{clothitem.images.first.image_url.url}}" alt="Product Image" class="img-fluid me-3" style="width: 80px;">
+                        <div>
+                            <p class="mb-1 fw-bold">{{clothitem.item_name}}</p>
+                            <p class="mb-1">Size: 7, Brown</p>
+                            <p class="mb-1">Seller: STORMx</p>
+                            <p class="mb-1">Delivery by Sat Aug 17 <span class="text-success">Free</span></p>
+                            <p class="mb-1"><del>$3,299</del> <span class="text-danger fw-bold">${{clothitem.price}}</span> <span class="badge bg-success">78% Off</span> <span class="badge bg-info">1 offer applied</span></p>
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-outline-secondary btn-sm me-2">-</button>
+                                <span>1</span>
+                                <button class="btn btn-outline-secondary btn-sm ms-2">+</button>
+                                <button class="btn btn-outline-danger btn-sm ms-3">REMOVE</button>
+                            </div>
+                        </div>
+                    </div>
+                    <p>Order confirmation email will be sent to soorajsundaran66@gmail.com</p>
+                    <button class="btn btn-warning btn-block">CONTINUE</button>
+                </div>
+
+                <!-- Payment Options Section -->
+                <div class="p-3 mb-3 border rounded">
+                    <h5 class="mb-3">PAYMENT OPTIONS <button class="btn btn-outline-primary btn-sm">CHANGE</button></h5>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="creditCardOption" value="creditCard">
+                        <label class="form-check-label" for="creditCardOption">Credit Card</label>
+                        <!-- Credit Card Option -->
+                    <div id="creditCard" class="payment-option">
+                        <div class="mb-3">
+                            <label for="cvv" class="form-label">Enter CVV</label>
+                            <input type="text" class="form-control" id="cvv" placeholder="CVV">
+                        </div>
+                        <button class="btn btn-primary">Continue</button>
+                    </div>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="upiOption" value="upi">
+                        <label class="form-check-label" for="upiOption">UPI</label>
+                        <!-- UPI Option -->
+                    <div id="upi" class="payment-option">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="upiMethod" id="gpayOption" value="gpay">
+                            <label class="form-check-label" for="gpayOption">GPay</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="upiMethod" id="phonePayOption" value="phonePay">
+                            <label class="form-check-label" for="phonePayOption">PhonePe</label>
+                        </div>
+                        <div class="mt-3">
+                            <label for="upiId" class="form-label">Enter UPI ID</label>
+                            <input type="text" class="form-control" id="upiId" placeholder="UPI ID">
+                        </div>
+                        <button class="btn btn-primary mt-3">Pay</button>
+                    </div>
+
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="cashOnDeliveryOption" value="cashOnDelivery">
+                        <label class="form-check-label" for="cashOnDeliveryOption">Cash on Delivery</label>
+
+                        <!-- Cash on Delivery Option -->
+                    <div id="cashOnDelivery" class="payment-option">
+                        <div class="mb-3">
+                            <label for="captcha" class="form-label">Enter Captcha</label>
+                            <input type="text" class="form-control" id="captcha" placeholder="Enter Captcha">
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmCaptcha" class="form-label">Re-enter Captcha</label>
+                            <input type="text" class="form-control" id="confirmCaptcha" placeholder="Re-enter Captcha">
+                        </div>
+                        <button class="btn btn-primary">Confirm</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Details Sidebar -->
+            <div class="col-12 col-md-4">
+                <div class="p-3 mb-3 border rounded">
+                    <h5 class="mb-3">PRICE DETAILS</h5>
+                    <p>Price (1 item): ₹699</p>
+                    <p>Delivery Charges: Free</p>
+                    <h5>Total Payable: ₹699</h5>
+                    <p class="text-success">Your Total Savings on this order: ₹2,600</p>
+                    <p class="text-muted">Save extra ₹40 using 40 Supercoins</p>
+                </div>
+                <div class="p-3 mb-3 border rounded">
+                    <h5>Super Coin</h5>
+                    <p>For every ₹100 spent, you earn 2 SuperCoins. Max 50 coins per order.</p>
+                </div>
+                <div class="p-3 mb-3 border rounded">
+                    <h5>Secure Payments</h5>
+                    <p>Safe and Secure Payments. Easy returns. 100% Authentic products.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Address Modal -->
+    <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addressModalLabel">Edit Delivery Address</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Enter your name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="phone" placeholder="Enter your phone number">
+                        </div>
+                        <div class="mb-3">
+                            <label for="pincode" class="form-label">Pincode</label>
+                            <input type="text" class="form-control" id="pincode" placeholder="Enter your pincode">
+                        </div>
+                        <div class="mb-3">
+                            <label for="state" class="form-label">State</label>
+                            <input type="text" class="form-control" id="state" placeholder="Enter your state">
+                        </div>
+                        <div class="mb-3">
+                            <label for="nation" class="form-label">Nation</label>
+                            <input type="text" class="form-control" id="nation" placeholder="Enter your nation">
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" rows="3" placeholder="Enter your address"></textarea>
+                        </div>
+                        <button type="button" class="btn btn-primary w-100">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}<script src="{% static 'user-order.js' %}"></script>{% endblock %}

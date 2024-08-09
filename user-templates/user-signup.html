@@ -1,0 +1,34 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static 'login-page.css' %}">{% endblock %}
+
+{% block title %}Login or Signup{% endblock %}
+
+{% block content %}
+<main class="main-content d-flex flex-column flex-md-row align-items-center justify-content-center">
+    <div class="img-container d-none d-md-block" style="width: 40%;">
+        <img src="{% static 'images/vlad-braga-ncJqytU7ydc-unsplash.jpg' %}" alt="Login Image" class="img-fluid" style="width: 100%; height: auto; object-fit: cover;">
+    </div>
+    <div class="d-flex flex-column align-items-center" style="width: 60%;">
+
+        <form id="signupform" action="post" class="d-flex flex-column" style="row-gap: 10px; width: 50%; display: none;">
+            <label for="">Enter Fullname:</label>
+            <input type="text" name="name" placeholder="Fullname" class="form-control p-2" style="border-radius: 10px;">
+            <label for="">Enter New Username:</label>
+            <input type="text" name="username" placeholder="Username" class="form-control p-2" style="border-radius: 10px;">
+            <label for="">Enter Your Email:</label>
+            <input type="email" name="email" placeholder="Email" class="form-control p-2" style="border-radius: 10px;">
+            <label for="">Enter New Password:</label>
+            <input type="password" name="password" placeholder="Password" class="form-control p-2" style="border-radius: 10px;">
+            <label for="">Re-enter Password:</label>
+            <input type="password" name="confirm_password" placeholder="Confirm Password" class="form-control p-2" style="border-radius: 10px;">
+            <input type="submit" value="Signup" class="btn" style="background-color: #282828; color: white; padding: 10px 30px; border-radius: 10px;">
+        </form>
+        <p class="mt-2">already have an account? <a href="/userlogin">login</a></p>
+        <p class="mt-1">Payments are secured and encrypted</p>
+        <p>Terms & conditions apply</p>
+    </div>
+</main>
+{% endblock %}
+
+

@@ -1,0 +1,68 @@
+{% extends 'admintemplate.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static 'add-product.css' %}">{% endblock %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div id="add-product" class="page">
+                <h2>Create Product</h2>
+                <form  method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="form1">              <!-- identification input form1 -->
+                    <label for="product-title">Product title</label>
+                    <input type="text" id="product-title" name="itemName" placeholder="Writing">
+
+                    <label for="" class=>Specification</label>
+                    <div>
+                        <input name="size" type="checkbox" value="small">
+                        <label for="">small</label>
+                        <input name="size" type="checkbox" value="medium">
+                        <label for="">medium</label>
+                       <input name="size" type="checkbox" value="large">                           <!--   add product-->
+                        <label for="">large</label>
+                        <input name="size" type="checkbox" value="x-large">
+                        <label for="">x-large</label>
+                    </div>
+
+
+                    <label for="desc">Description</label>
+                    <textarea name="itemDesc" id="desc1" placeholder="Type here"></textarea>
+
+                    <label for="images">Images</label>
+                    <div id="images1">
+                        <input type="file" name="itemImg" placeholder="upload" multiple>
+                    </div>
+
+                    <label for="category">Category</label>
+                    <select id="category" name="itemCat" >
+                        {% for i in data %}
+                        <option value="{{i.category_id}}">{{i.category_name}}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="price">Price</label>
+                    <input type="text" id="price" name="itemPrice" placeholder="Price">
+
+                    <label for="">Stock</label>
+                    <div>
+                        <input type="radio"  name="stock" value="available" checked>
+                        <label for="">available</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="stock" value="Not-available">
+                        <label for="" >Not-available</label>
+                    </div>
+
+
+                    <div class="checkbox">
+                        <input type="checkbox" id="publish" checked>
+                        <label for="publish">Publish on site</label>
+                    </div>
+
+                    <button type="submit">Submit item</button>
+                </form>
+            </div>
+{% endblock %}
+
+{% block script %}{% endblock %}

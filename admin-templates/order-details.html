@@ -1,0 +1,109 @@
+{% extends 'admintemplate.html' %}
+{% load static %}
+{% block meta %}
+<link rel="stylesheet" href="{% static 'order-details.css' %}">
+<style>
+        .payment-option {
+            display: none;
+        }
+        .payment-option.active {
+            display: block;
+        }
+    </style>
+{% endblock %}
+
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div id="order-desc" class="page">
+                <div class="order-header">
+                    <h2>Order Details</h2>
+                    <div class="order-actions">
+                        <label for="status">Change status</label>
+                        <select id="status">
+                            <option value="pending">Pending</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <button>Save</button>
+                    </div>
+                </div>
+                <div class="order-details">
+                    <div class="order-info">
+                        <p><strong>Order ID:</strong> #3453012</p>
+                        <p><strong>Date:</strong> Wed, Aug 13, 2020, 4:34PM</p>
+                    </div>
+                    <div class="order-section">
+                        <div class="order-customer">
+                            <h3>Customer</h3>                                                               <!-- order details -->
+                            <p>John Alexander</p>
+                            <p>alex@example.com</p>
+                            <p>+998 99 22123456</p>
+                            <a href="#">View profile</a>
+                        </div>
+                        <div class="order-shipping">
+                            <h3>Shipping</h3>
+                            <p>Fargo express</p>
+                            <p>Payment method: Card card</p>
+                            <p>Status: Status</p>
+                            <a href="#">Download</a>
+                        </div>
+                        <div class="order-deliver">
+                            <h3>Deliver to</h3>
+                            <p>City: Tashkent, Uzbekistan</p>
+                            <p>Street: Beruniy 369</p>
+                            <p>Address: Block A, House 123, Floor 2</p>
+                            <a href="#">Open map</a>
+                        </div>
+                    </div>
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Supreme helinox chair one</td>
+                                <td>2</td>
+                                <td>$43.50</td>
+                                <td>$87.00</td>
+                            </tr>
+                            <tr>
+                                <td>Gopro hero 7</td>
+                                <td>1</td>
+                                <td>$43.50</td>
+                                <td>$87.00</td>
+                            </tr>
+                            <!-- Add more rows as needed -->
+                        </tbody>
+                    </table>
+                    <div class="order-summary">
+                        <p><strong>Subtotal:</strong> $973.35</p>
+                        <p><strong>Shipping cost:</strong> $10.00</p>
+                        <p><strong>Total:</strong> $983.00</p>
+                        <p><strong>Status:</strong> <span class="status-paid">Payment made</span></p>
+                    </div>
+                    <div class="order-payment">
+                        <h3>Payment info</h3>
+                        <p>Master Card **** 4768</p>
+                        <p>Business name: Master Card, inc.</p>
+                        <p>Phone: +1 (800) 555-154-52</p>
+                    </div>
+                    <div class="order-notes">
+                        <h3>Notes</h3>
+                        <textarea placeholder="Type here"></textarea>
+                        <button>Save note</button>
+                    </div>
+                </div>
+            </div>
+
+
+{% endblock %}
+
+{% block script %}{% endblock %}

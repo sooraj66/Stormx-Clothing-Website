@@ -1,0 +1,40 @@
+{% extends 'admintemplate.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static 'order-list.css' %}">{% endblock %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div id="orders" class="page">
+                <h2>Orders Content</h2>
+                <table class="classic-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Order ID</th>
+                            <th>Product Name</th>
+                            <th>Address</th>
+                            <th>Date</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>ORD001</td>
+                            <td>Product A</td>
+                            <td>123 Street, City</td>
+                            <td>2024-07-29</td>
+                            <td>$100.00</td>
+                            <td>Shipped</td>
+                            <td><a href="/order-list/order-details"><button id="order2" onclick="showPage('order-desc','order2')">view</button></a></td>
+                        </tr>
+                        <!-- More rows as needed -->
+                    </tbody>
+                </table>
+            </div>
+{% endblock %}
+
+{% block script %}{% endblock %}

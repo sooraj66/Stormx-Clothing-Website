@@ -1,0 +1,45 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static 'buy.css' %}">{% endblock %}
+
+{% block title %}topwears{% endblock %}
+
+{% block content %}
+<!-- content start -->
+ <div class="container-fluid" style="margin-top: 5rem;">
+    <div class="row text-center" style="flex-direction: column;letter-spacing: 5px;">
+        <h1>{{category.category_name}}</h1>
+        <p>breadcrumbs</p>
+    </div>
+ </div>
+<main class="container" style="margin-top: 2rem;">
+    <div class="row justify-content-center justify-content-md-start">
+            {% for i in clothitems %}
+        <a href="/{{i.category}}/{{i.item_id}}" class="col-lg-3 col-md-4 col-6 text-decoration-none">
+            <div class="card p-0 border-0">
+            <img src="{{i.images.first.image_url.url}}" class="card-img-top" alt="..." style="height:25%;">
+            <div class="card-body p-0">
+              <h5 class="card-title">{{i.item_name}}</h5>
+              <p class="card-text text-truncate">{{i.description}}</p>
+            <div class="row ">
+                    <p class="col-10"><b>Rs:{{i.price}}</b></p>
+                <!-- Heart Button -->
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="item_id" value="{{ i.item_id }}">
+                        <button  class="btn btn-light  heart-button col-2" type="submit" aria-label="Add to wishlist" value="{{i.item_id}}">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+
+    </div>
+</main>
+
+<!-- content end -->
+{% endblock %}
+

@@ -1,0 +1,24 @@
+{% extends 'admintemplate.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static '.css' %}">{% endblock %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div id="transactions-details" class="page">
+    <div class="transaction-details">
+        <h3>Transaction Details</h3>
+        <p><strong>Supplier:</strong> TemplateMount</p>
+        <p><strong>Date:</strong> December 19th, 2020</p>
+        <p><strong>Billing address:</strong> 1901 Thornridge Cir. Shiloh, Hawaii 81063</p>
+        <p><strong>VAT ID:</strong> 54741654160</p>
+        <p><strong>Email:</strong> support@example.com</p>
+        <p><strong>Item purchased:</strong> <br> Adidas Air Jordan <br> Adidas Air Jordan</p>
+        <p><strong>PayPal:</strong> *customer@example.com</p>
+        <p><strong>Paid:</strong> <span class="amount">$457.14</span></p>
+        <button>Download receipt</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'admintemplate.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static '.css' %}">{% endblock %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div id="brands" class="page">
+    <h1>Categories</h1>
+    <!--category start-->
+            <div class="row">
+                {% for i in data %}
+                    <a  class="col-md-3" href="">
+                    <img style="height:21rem" class="col-md-12" src="{{i.category_img.url}}" alt="{{ i.category_name }}">
+                        <h4>{{ i.category_name }}</h4>
+                        <a href="/deleteCategory/{{i.category_id}}">delete</a>
+                        <a href="/updateCategory/{{i.category_id}}">update</a>
+                    </a>
+                {% endfor %}
+            </div>
+    <!--category end-->
+</div>
+{% endblock %}
+
+{% block script %}{% endblock %}

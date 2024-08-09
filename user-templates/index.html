@@ -1,0 +1,158 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static 'style.css' %}">{% endblock %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+ <!--MAIN IMAGE CONTAINER START-->
+    <div class="container-fluid img-container">
+        <div class="title">
+            <h1 class=""><span class="span1">WEAR</span> <br> <span>WHAT</span> <br> <span class="span2">MATTERS</span></h1>
+        </div>
+        <button class="btn text-white top-btn">shop now!</button>
+    </div>
+
+<!--<div class="container-fluid img-container" style="position:relative;overflow:hidden">-->
+<!--        <img src="{% static 'static/images/toa-heftiba-xLUwi3yDNb0-unsplash.jpg' %}" alt="" style="position:absolute;top:-50rem">-->
+<!--        <div class="title">-->
+<!--            <h1 class=""><span class="span1">WEAR</span> <br> <span>WHAT</span> <br> <span class="span2">MATTERS</span></h1>-->
+<!--        </div>-->
+<!--        <button class="btn text-white top-btn">shop now!</button>-->
+<!--    </div>-->
+    <!--MAIN IMAGE CONTAINER END-->
+
+    <!--logos div start-->
+    <div class="container logo-container">
+        <div class="row justify-content-center p-5" style="gap: 1rem; ">
+            <div class="col-lg-2 col-md-4 col-4" style='max-width: 100%;'><img  src="https://framerusercontent.com/images/zBWNdmAieoTmcQCkIkTZ9rfnqo.svg" alt=""></div>
+            <div class="col-lg-2 col-md-4 col-4" style='max-width: 100%;'><img  src="https://framerusercontent.com/images/u8WevV7mCKQBN8jeLHALsSQQs34.svg" alt=""></div>
+            <div class="col-lg-2 col-md-4 col-4" style='max-width: 100%;'><img  src="https://framerusercontent.com/images/StsYHkCZHpy4eY8jsBCQEWc.svg" alt=""></div>
+            <div class="col-lg-2 col-md-4 col-4" style='max-width: 100%;'><img  src="https://framerusercontent.com/images/jOc8ocv3NkFD0PkOQbamqxXhuE.svg" alt=""></div>
+            <div class="col-lg-2 col-md-4 col-4" style='max-width: 100%;'><img  src="https://framerusercontent.com/images/WdroEkOLMZk4iQzRgxNWMhLTlY.svg" alt=""></div>
+        </div>
+
+    </div>
+    <!--logos div end-->
+
+    <!--offer div start-->
+    <div class="container-fluid d-flex justify-content-center flex-wrap">
+        <div class="offer_div col-12  d-flex row row-gap-3 row-gap-md-0" style="width:100%; padding:2rem; background-color:#e10606d1;">
+
+            <div class="d-flex flex-column align-items-center justify-content-center col-12 col-md-6">
+                <h1 class="text-white">THE SALE</h1>
+                <p class="text-white">grab before its gone!</p>
+                <button class="btn text-black bg-white offer-btn ps-5 pe-5  d-md-flex" style="font-size: 15px; font-weight: 600;">shop now!</button>
+            </div>
+
+            <div class="col-12 col-md-6 d-flex flex-column align-items-center">
+                <h1 class="text-white" style="font-size:5rem">FLAT <br> 50% OFF</h1>
+                <p class="text-white">T&C apply | selected items</p>
+
+            </div>
+        </div>
+    </div>
+    <!--offer div end-->
+
+    <!--catergory start-->
+<div class="container-fluid text-center mt-4">
+    <h2>Shop What You Like</h2>
+</div>
+        <div class="container-fluid d-flex mb-5 d-flex justify-content-center" >
+
+            <div class="row mt-5 col-12 justify-content-center" style="gap: 1rem;">
+                {% for i in category %}
+                    <a style="overflow:hidden;justify-content:center;display:flex;width:17rem;" class="col-lg-3 col-md-4 col-6" href="/category/{{i.category_id}}" >
+                    <img class="category-subdiv" src="{{i.category_img.url}}" alt="{{ i.category_name }}">
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    <!--catergory start-->
+
+    <!--summer start-->
+    <div class="container-fluid mt-5" style="display:flex; justify-content:center;">
+        <div class="row col-12 justify-content-center">
+            <img src="{% static 'static/images/toa-heftiba-KQ1n6HzSahY-unsplash.jpg' %}" alt="" class="col-12 col-md-6">
+            <div class="row col-12 col-md-6 text-center p-5" style="flex-direction: column; justify-content: center;align-items: center;    background: linear-gradient(207deg, #c9570f, #e1eaed);">
+                <h3>EMBRACE THE SUMMER</h3>
+                <h5 class="" style="font-size:15px; font-weight:400;">Style meets sophistication with StormX - Where quality fashion effortlessly meets your lifestyle.</h5>
+                <button class="btn col-6 mt-4 text-white" style="font-size:1rem;background-color:#282828;">shope now</button>
+            </div>
+        </div>
+    </div>
+<!--        <div class="container d-none d-md-block d-flex justify-content-center p-5">-->
+<!--            <div  class="summer">-->
+<!--                <div class="img-container-summer"></div>-->
+<!--                <div class="featured">FEATURED</div>-->
+<!--                <div class="text">-->
+<!--                    ALL THAT YOU WANT IN ONE SERENE-->
+<!--                </div>-->
+<!--                <div class="embrace"><h3>EMBRACE THE SUMMER IN STYLE</h3></div>-->
+<!--                <div class="btn-embrace">-->
+<!--                    <button class="btn">shope now</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+    <!--summer end-->
+
+    <!--trendingnow start-->
+<!-- <div class="container-fluid d-none d-md-block" style="display: flex; justify-content: center;">
+    <div class="trending">
+        <div class="stormx1"><h1>STORMx</h1></div>
+        <div class="img-container-trending"></div>
+        <div class="shape-circle"></div>
+        <div class="heading"><h1>TRENDING NOW</h1></div>
+        <div class="title-trending"><h3>Style is way to say who you are...</h3></div>
+        <div class="offer"><h2>30-50% OFF</h2></div>
+        <div class="brands"><p>on all brands</p></div>
+        <div class="btn-trending"><button>shope now</button></div>
+        <div class="stormx2"><h1>STORMx</h1></div>
+
+    </div>
+</div> -->
+    <!-- trending now end-->
+
+
+    <!-- discover start -->
+<!--     <div class="container mt-5 pt-5">-->
+<!--        <div class="row justify-content-center text-black" style="flex-wrap: wrap;">-->
+<!--            <div class="col-12 col-md-6">-->
+<!--                <h2>Discover A Range Of Colors</h2>-->
+<!--                <h5>that resonates with every mood</h5>-->
+<!--            </div>-->
+<!--            <div class="col-12 col-md-6" style="height:15rem; overflow:hidden;object-fit:cover;">-->
+<!--                <img src="{% static 'static/images/rayul-_M6gy9oHgII-unsplash.jpg' %}" alt="">-->
+<!--            </div>-->
+
+
+<!--             <div class="container">-->
+<!--                <div>-->
+<!--                  <span class="heading">DISCOVER</span><br>-->
+<!--                  <span class="sub-heading">A RANGE OF COLORS</span>-->
+<!--                </div>-->
+<!--                <div>-->
+<!--                  <h4>That Resonates With Every Mood</h4>-->
+<!--                </div>-->
+<!--                <button class="btn mt-4 text-white">shop now</button>-->
+<!--              </div>-->
+<!--            <div class="discover-img-container d-flex justify-content-center" style="flex: 1;">-->
+<!--                <img src="{% static 'static/images/rayul-_M6gy9oHgII-unsplash.jpg' %}" alt="">-->
+<!--            </div>-->
+     </div>
+    <!-- discover end -->
+
+    <!-- inspired start -->
+     <div class="container d-flex mt-5 pt-5" style="flex-direction: column; justify-content: center; align-items: center;text-align: center;">
+        <h4 style="font-weight: 300;">GET INSPIRED</h4>
+        <div class="row mt-5 justify-content-center" style="gap: 2rem;" >
+            <div class="col-md-3 col-12"><img src="{%static 'static/images/denim-outfit-ideas-for-springImage2.jpg' %}" alt="" class="img-fluid"><p>Denim Outfit Ideas</p></div>
+            <div class="col-md-3 col-12"><img src="{%static 'static/images/fall-in-love-with-linenImage1.jpg' %}" alt="" class="img-fluid"><p>Fall In Love With Linen</p></div>
+            <div class="col-md-3 col-12"><img src="{%static 'static/images/the-ultimate-holiday-checklistSIPImage.jpg' %}" alt="" class="img-fluid"><p>Ultimate Holiday Checklist</p></div>
+        </div>
+     </div>
+     <!-- inspired end -->
+
+    {% endblock %}
+
+
