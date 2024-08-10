@@ -1,7 +1,6 @@
 {% extends 'header.html' %}
 {% load static %}
 {% block meta %}
-<meta name="csrf-token" content="{{ csrf_token }}">
 <link rel="stylesheet" href="{% static 'login-page.css' %}">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{% static 'p_desc.js' %}"></script>
@@ -39,6 +38,7 @@
                 <div>
                     <button id="buy-now" class="btn" data-item-id="{{ clothitem.item_id }}" data-category-name = "{{clothitem.category.category_name}}" style="background-color: #282828; width: 11rem;padding:10px 20px ;color: white; font-size: 20px;">Buy now</button>
                     <button id="add-to-cart" class="btn" style="background-color: #282828; width: 11rem;padding:10px 20px ;color: white; font-size: 20px;" data-item-id="{{ clothitem.item_id }}">Add to cart</button>
+                    <button id="add-to-wishlist" class="btn" style="padding:10px;color: #e1232394;border-style:none;" data-item-id="{{ clothitem.item_id }}"><i class="fas fa-heart"></i></button>
               </div>
 
                 <div class="mt-4">

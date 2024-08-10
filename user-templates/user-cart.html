@@ -10,14 +10,17 @@
         <h3>Shopping Cart</h3><br>
         <div class="row">
             <div class="col-12 col-md-8 order-2 order-md-1">
-
+{% if cart_items %}
     {% for i in cart_items %}
                 <div class="p-4 mb-4 border">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <a href="#" class="text-dark text-decoration-none flex-grow-1">{{i.cloth_item.item_name}}</a>
-                        <button type="button" class="btn btn-light p-1" data-toggle="modal" data-target="#removeProductModal" data-pid="000000060369985005" data-name="Slim Fit 360 Flex Jeans" data-action="/on/demandware.store/Sites-mnsindia-Site/en_IN/Cart-RemoveProductLineItem" data-uuid="60befc535ea246294c88282e28" aria-label="remove" data-productstroke="T17/1389S">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <form method="post" action="/deletefromcart/{{i.cloth_item.category}}/{{i.cloth_item.item_id}}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-light p-1" aria-label="remove">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </form>
                     </div>
 
                     <div class="d-flex">
@@ -57,7 +60,12 @@
                     </div>
                 </div>
                 {% endfor %}
-
+                {% else %}
+                    <div class="p-4 mb-4 text-center">
+                        <img class="col-5 m-auto" src="{% static 'static/images/cart-empty.jpg' %}" alt="">
+                        <p>Add items to cart</p>
+                    </div>
+                {%endif%}
             </div>
             <div class="col-12 col-md-4 order-1 order-md-2 mb-4 mb-md-0">
                 <div class="p-4 border">

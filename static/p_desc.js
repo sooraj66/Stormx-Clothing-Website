@@ -52,4 +52,27 @@ $(document).ready(function() {
     });
 });
 
+$('#add-to-wishlist').click(function() {
+    console.log("Button clicked!");
+    const itemId = $(this).data('item-id');
+
+    $.ajax({
+        url: '/category/' + itemId,  // URL to your backend view
+        method: 'POST',
+        data: {
+            'item_id': itemId,
+        },
+        success: function(response) {
+            if (response.message === "item already in wishlist"){
+                alert('Item already in wishlist');
+            } else {
+                alert('Item added to wishlist');
+            }
+        },
+        error: function(error) {
+            alert('Something went wrong');
+        }
+    });
+});
+
 });

@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('home/',views.home),
+    path('home',views.home),
     path('userlogin/',views.user_login),
     path('usersignup/',views.user_signup),
     path('userlogout',views.user_logout),
@@ -15,7 +15,9 @@ urlpatterns = [
     path('order/<str:category>/<int:id1>',views.show_order),
     path('cart',views.show_cart),
     path('user-profile',views.show_user_profile),
-    path('add-to-cart',views.add_to_cart)
+    path('add-to-cart',views.add_to_cart),
+    path('deletefromcart/<str:category>/<int:id>',views.deletefromcart)
+    # path('changeprofilepic',views.change_profile_pic)
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:
