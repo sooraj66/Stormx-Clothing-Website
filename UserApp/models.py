@@ -32,7 +32,7 @@ class Cart(models.Model):
     cart_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     cloth_item = models.ForeignKey(ClothItems, on_delete=models.CASCADE)
-    quantity = models.IntegerField(null=True)
+    quantity = models.IntegerField(null=True,default=1)
 
 
 class Wishlist(models.Model):

@@ -52,21 +52,24 @@ $(document).ready(function() {
     });
 });
 
-$('#add-to-wishlist').click(function() {
-    console.log("Button clicked!");
+$('.add-to-wishlist').click(function() {
     const itemId = $(this).data('item-id');
-
+    console.log(itemId);
+    const categoryId = $(this).data('category-id');
+    console.log(categoryId);
     $.ajax({
-        url: '/category/' + itemId,  // URL to your backend view
+        url: '/'+ categoryId + '/' + itemId,  // URL to your backend view
         method: 'POST',
         data: {
             'item_id': itemId,
+            'category_id': categoryId,
         },
         success: function(response) {
             if (response.message === "item already in wishlist"){
                 alert('Item already in wishlist');
             } else {
                 alert('Item added to wishlist');
+                $('.offcanvas-body').html(response);
             }
         },
         error: function(error) {
@@ -74,5 +77,26 @@ $('#add-to-wishlist').click(function() {
         }
     });
 });
+
+
+$('.quantity').change(function(){
+    const Qty = $(this).find(':selected').data('qty-no');
+    const clothId = $(this).find(':selected').data('cloth-id');
+    $.ajax({
+        url: '/updateQuantity',
+        method: 'post',
+        data: {
+            'qty': Qty,
+            'cloth_id': clothId,
+        },
+        success: function(response) {
+            window.location.href = "/cart";
+        },
+        error: function(response) {
+            alert('Something went wrong');
+        }
+    });
+});
+
 
 });

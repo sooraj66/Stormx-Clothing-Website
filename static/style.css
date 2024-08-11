@@ -180,11 +180,9 @@
 
         /* category start */
             .category-subdiv{
-                background-size: cover;
-                background-position: center;
-                height: 20rem;
+
                 transition: transform 0.5s ease;
-                
+
             }
             .category-subdiv:hover{
                 transform: scale(1.1);

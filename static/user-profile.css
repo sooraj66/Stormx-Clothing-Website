@@ -30,7 +30,7 @@
     border-radius: 50%;
     width: 150px;
     height: 150px;
-    background-color: red;
+    object-fit: cover;
 }
 
 .form-section {

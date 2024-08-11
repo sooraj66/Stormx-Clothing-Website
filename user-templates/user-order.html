@@ -19,13 +19,6 @@
         <div class="row">
             <!-- Main Content -->
             <div class="col-12 col-md-8">
-                <!-- Login Section -->
-                <div class="p-3 mb-3 border rounded">
-                    <h5 class="mb-1">LOGIN</h5>
-                    <p>{{user.firstname}} {{user.secondname}}</p>
-                    <button class="btn btn-outline-primary btn-sm">CHANGE</button>
-                </div>
-
                 <!-- Delivery Address Section -->
                 <div class="p-3 mb-3 border rounded">
                     <h5 class="mb-1">DELIVERY ADDRESS</h5>
@@ -151,15 +144,15 @@
                     <form>
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" placeholder="Enter your name">
+                            <input type="text" class="form-control" id="name" value="{{user.firstname}} {{user.secondname}}" placeholder="Enter your name">
                         </div>
                         <div class="mb-3">
                             <label for="phone" class="form-label">Phone Number</label>
-                            <input type="text" class="form-control" id="phone" placeholder="Enter your phone number">
+                            <input type="text" class="form-control"value="" id="phone" placeholder="Enter your phone number">
                         </div>
                         <div class="mb-3">
                             <label for="pincode" class="form-label">Pincode</label>
-                            <input type="text" class="form-control" id="pincode" placeholder="Enter your pincode">
+                            <input type="text" class="form-control" value="" id="pincode" placeholder="Enter your pincode">
                         </div>
                         <div class="mb-3">
                             <label for="state" class="form-label">State</label>
@@ -171,7 +164,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address" rows="3" placeholder="Enter your address"></textarea>
+                            <input class="form-control" value="" id="address" rows="3" placeholder="Enter your address"></input>
                         </div>
                         <button type="button" class="btn btn-primary w-100">Save</button>
                     </form>

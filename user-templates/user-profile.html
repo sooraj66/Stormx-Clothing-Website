@@ -122,11 +122,11 @@
                         <img src="{{i.cloth_item.images.first.image_url.url}}" alt="Wishlist Item">
                         <div class="item-details">
                             <h5>{{i.cloth_item.item_name}}</h5>
-                            <p>{{i.cloth_item.description}}</p>
+                            <p class="">{{i.cloth_item.description}}</p>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
                 <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
                     <div class="item">
                         <img src="" alt="Order Item">

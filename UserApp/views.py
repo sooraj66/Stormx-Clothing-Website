@@ -3,6 +3,7 @@ from AdminApp.models import Category, ClothItems
 
 from .models import User, Wishlist, Cart
 from django.http import JsonResponse, HttpResponseNotFound
+import random
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -52,8 +53,11 @@ def home(request):
         category = Category.objects.all()
         name = request.session['username']
         user = User.objects.get(username=name)
+        clothitems = list(ClothItems.objects.all())
+        random.shuffle(clothitems)
+        clothitems = clothitems[:4]
         wishlists = Wishlist.objects.filter(user=user.user_id)
-        return render(request, 'index.html', {"user": user, "category": category, "wishlist": wishlists})
+        return render(request, 'index.html', {"user": user, "category": category, "wishlist": wishlists,"clothitems":clothitems})
     else:
         return redirect('/userlogin')
 
@@ -64,29 +68,38 @@ def show_products(request, id):
         user = User.objects.get(username=name)
         category = Category.objects.get(category_id=id)
         clothitems = ClothItems.objects.filter(category=id)
-        if request.method == 'POST':
-            cloth_id = request.POST.get('item_id')
-            clothitem = ClothItems.objects.get(item_id=cloth_id)
-            try:
-                wishlists = Wishlist.objects.get(user=user.user_id, cloth_item=clothitem)
-                if wishlists:
-                    pass
-                else:
-                    Wishlist.objects.create(user=user, cloth_item=clothitem)
-            except Wishlist.DoesNotExist:
-                Wishlist.objects.create(user=user, cloth_item=clothitem)
-                print("created")
-
         wishlists = Wishlist.objects.filter(user=user.user_id)
         return render(request, 'topwears.html', {
             "user": user,
             "clothitems": clothitems,
             "category": category,
-            "wishlist": wishlists
+            "wishlist":wishlists
         })
     else:
         return redirect('/userlogin')
 
+
+def add_to_wishlist(request,catid,itmid):
+    if 'username' in request.session:
+        username = request.session['username']
+        user = User.objects.get(username =username)
+        if request.method == 'POST':
+            category = Category.objects.get(category_id = catid)
+            clothitem = ClothItems.objects.get(item_id = itmid)
+            try:
+                in_wishlist = Wishlist.objects.get(user = user, cloth_item = clothitem)
+                if in_wishlist:
+                    return JsonResponse({'message': 'item already in wishlist'})
+                else:
+                    Wishlist.objects.create(user = user, cloth_item = clothitem)
+            except Wishlist.DoesNotExist:
+                Wishlist.objects.create(user=user, cloth_item=clothitem)
+
+            return JsonResponse({'message':'success'})
+        else:
+            return JsonResponse({'message': 'Failed'}, status=400)
+    else:
+        return redirect('/home')
 
 def produt_description(request, category, id):
     if 'username' in request.session:
@@ -95,24 +108,36 @@ def produt_description(request, category, id):
         category = Category.objects.get(category_name=category)
         clothitem = ClothItems.objects.get(item_id=id)
         wishlists = Wishlist.objects.filter(user=user.user_id)
+        similaritems = list(ClothItems.objects.filter(category = category).exclude(item_id = id)) #for shuffling item
+        random.shuffle(similaritems)
+        similaritems = similaritems[:5]
     return render(request, 'p_desc.html',
-                  {"user": user, "clothitem": clothitem, "category": category, "wishlist": wishlists})
+                  {"user": user, "clothitem": clothitem, "category": category, "wishlist": wishlists,"similaritems":similaritems})
 
 
 def deletefromwishlist(request, id):
-    item = Wishlist.objects.get(wishlist_id=id)
-    item.delete()
-    return none
+    if 'username' in request.session:
+        username = request.session['username']
+        user = User.objects.get(username=username)
+        if request.method == 'POST':
+            try:
+                wishlist_item = Wishlist.objects.get(user=user.user_id, cloth_item=id)
+                wishlist_item.delete()
+            except Wishlist.DoesNotExist:
+                return HttpResponseNotFound("not found")
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
-def deletefromcart(request, category, id):
-    if request.method == 'POST':
-        try:
-            category = Category.objects.get(category_name=category)
-            cloth_item = ClothItems.objects.get(item_id=id)
-            cloth_item.delete()
-        except ClothItems.DoesNotExist:
-            return HttpResponseNotFound("not found")
+def deletefromcart(request, id):
+    if 'username' in request.session:
+        username = request.session['username']
+        user = User.objects.get(username = username)
+        if request.method == 'POST':
+            try:
+                cart_item = Cart.objects.get(user = user.user_id, cloth_item = id)
+                cart_item.delete()
+            except ClothItems.DoesNotExist:
+                return HttpResponseNotFound("not found")
     return redirect('/cart')
 
 
@@ -137,7 +162,18 @@ def show_cart(request):
         user = User.objects.get(username=user_name)
         cart_items = Cart.objects.filter(user=user.user_id)
         wishlists = Wishlist.objects.filter(user=user.user_id)
-        return render(request, 'user-cart.html', {'cart_items': cart_items,"wishlist":wishlists})
+        overall_total = 0
+        overall_tax = 0
+        for item in cart_items:
+            item.tax = item.quantity * 10
+            overall_tax += item.tax
+            item.total_price = item.quantity * item.cloth_item.price
+            overall_total += item.total_price + item.tax
+        return render(request, 'user-cart.html', {'cart_items': cart_items,
+                                                  "wishlist":wishlists,
+                                                  'overall_total': overall_total,
+                                                  'overall_tax':overall_tax,
+                                                  'quantity_range': range(1, 6)})
     else:
         return redirect('/userlogin')
 
@@ -186,3 +222,22 @@ def add_to_cart(request):
         else:
             return JsonResponse({'message': 'user not authenticated'}, status=401)
     return JsonResponse({'message': 'Failed'}, status=400)
+
+
+def updatequantity(request):
+    if 'username' in request.session:
+        username = request.session['username']
+        user = User.objects.get(username = username)
+        if request.method == 'POST':
+            clothid = request.POST['cloth_id']
+            quantity = request.POST['qty']
+            cart_item = Cart.objects.get(user = user, cloth_item = clothid)
+            cart_item.quantity = quantity
+            cart_item.save()
+
+            return JsonResponse({'message':'qty updated'})
+        else:
+            return JsonResponse({'message':'not updated'})
+
+    else:
+        return redirect('/userlogin')

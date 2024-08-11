@@ -6,4 +6,3 @@ from .models import User, Wishlist,Cart
 admin.site.register(User)
 admin.site.register(Wishlist)
 admin.site.register(Cart)
-

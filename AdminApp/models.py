@@ -23,13 +23,20 @@ class ClothItems(models.Model):
     item_name = models.CharField(max_length=100)
     description = models.TextField()
     price = models.IntegerField()
-    stock = models.CharField(max_length=100)
+    stock = models.IntegerField()
+
+
+class Size(models.Model):
+    size_id = models.AutoField(primary_key = True)
+    sizes = models.CharField(max_length=100)
+    def __str__(self):
+        return self.sizes
 
 
 class ClothSpecification(models.Model):
-    size_id = models.AutoField(primary_key = True)
+    item_spec_id = models.AutoField(primary_key = True)
     cloth_item = models.ForeignKey(ClothItems, on_delete=models.CASCADE, related_name='size')
-    item_size = models.CharField(max_length=100)
+    size = models.ForeignKey(Size, on_delete=models.CASCADE, null=True)
 
 
 class ItemImages(models.Model):

@@ -36,15 +36,18 @@
                     </li>
                 </ul>
                 <a class="navbar-brand navbar-brand-centered d-none d-lg-block" href="/home">STORMx</a>
-                <ul class="navbar-nav ms-auto d-flex me-5" style="gap: 30px;">
+                <ul class="navbar-nav  d-flex ms-5" style="gap: 30px;">
                     <li class="nav-item">
                         <a class="nav-link" href="/user-profile"><i class="fas fa-user"></i></a>
+                        <label class="d-block d-lg-none" for="">user info</label>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWishlist" aria-controls="offcanvasWishlist"><i class="fas fa-heart"></i></a>
+                        <label class="d-block d-lg-none" for="">wishlist</label>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i></a>
+                        <label class="d-block d-lg-none" for="">cart</label>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/userlogout">Logout</a>
@@ -69,10 +72,16 @@
                  <div class="row">
                      {% if wishlist %}
                      {% for i in wishlist%}
+
                         <a href="/{{i.cloth_item.category.category_name}}/{{i.cloth_item.item_id}}" class="col-6 text-decoration-none">
-<!--                            <a href="/delete/{{i.cloth_item.item_id}}" class="btn-close"></a>-->
-                            <div class="card p-0 border-0" style="width: 13rem;">
-                            <img src="{{i.cloth_item.images.first.image_url.url}}" class="card-img-top" alt="...">
+                            <form method="post" action="/deletefromwishlist/{{i.cloth_item.item_id}}" class="col-12">
+                            {% csrf_token %}
+                                <button type="submit" class="btn btn-light p-1" aria-label="remove">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </form>
+                            <div class="card p-0 border-0 col-12" style="">
+                            <img src="{{i.cloth_item.images.first.image_url.url}}" style="border-radius:0;" class="col-12 card-img-top" alt="...">
                             <div class="card-body p-0">
                               <h5 class="card-title text-truncate">{{i.cloth_item.item_name}}</h5>
                               <p class="card-text text-truncate">{{i.cloth_item.description}}</p>
