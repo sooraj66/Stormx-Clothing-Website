@@ -37,27 +37,43 @@
             <p style="font-weight: 500; font-size: 20px;">MRP {{clothitem.price}}</p>
             <span style="margin-top:-20px; font-size:12px" class="">Price inclusive of all tax</span>
             <p style="font-weight: 400; font-size: 20px;">{{clothitem.description}}</p>
-                <div>
-                    <button id="buy-now" class="btn col-5" data-item-id="{{ clothitem.item_id }}" data-category-name = "{{clothitem.category.category_name}}" style="background-color: #282828; width: 11rem;padding:10px 20px ;color: white; font-size: 20px;">Buy now</button>
-                    <button id="add-to-cart" class="btn col-5" style="background-color: #282828; width: 11rem;padding:10px 20px ;color: white; font-size: 20px;" data-item-id="{{ clothitem.item_id }}">Add to cart</button>
-                    <button id="add-to-wishlist" class="btn col-2 m-auto" style="padding:10px;color: #e1232394;border-style:none;font-size:x-large;" data-item-id="{{ clothitem.item_id }}" data-category-id="{{ clothitem.category.category_id }}"><i class="fas fa-heart"></i></button>
+            <form method="post" action="{% url 'show_order'%}">
+                    {% csrf_token %}
+                <input type="hidden" name="categoryname" value="{{clothitem.category.category_name}}">
+                <input type="hidden" name="item_id" value="{{clothitem.item_id}}">
+                <input type="hidden" name="buy-now-identity">
+            <div>
+                    <button id="buy-now" type="submit" class="btn col-5" {% if clothitem.stock == 0 %}disabled{% endif %}  data-item-id="{{ clothitem.item_id }}" data-category-name = "{{clothitem.category.category_name}}" style="background-color: #282828; width: 11rem;padding:10px 20px ;color: white; font-size: 20px;">Buy now</button>
+                    <button id="add-to-cart" type="button" class="btn col-5" style="background-color: #282828; width: 11rem;padding:10px 20px ;color: white; font-size: 20px;" data-item-id="{{ clothitem.item_id }}">Add to cart</button>
+                    <button type="button" class="btn col-2 m-auto add-to-wishlist" style="padding:10px;color: #e1232394;border-style:none;font-size:x-large;" data-item-id="{{ clothitem.item_id }}" data-category-id="{{ clothitem.category.category_id }}"><i class="fas fa-heart"></i></button>
               </div>
 
                 <div class="mt-4">
                     <h3>Size</h3>
-                    <div col->
-                        <select name="" id=""
+                    <div>
+                        <select id="select-size" name="size_id"
                                 style="border-radius: 0;
                                 height: 45px !important;width: 100%;color: #000;border-color: #ccc;margin-bottom: 16px;">
-                            <option value="">choose size</option>
-                            {% for i in clothitem.size.all %}
-                            <option value="{{i.size.size_id}}">{{i.size.sizes}}</option>
+                            <option value="" disabled selected>choose size</option>
+                            {% for i in clothitem.clothspec.all %}
+                            <option value="{{i.size.size_id}}" data-size-id = {{i.size.size_id}} >{{i.size.sizes}}</option>
                             {% endfor %}
                         </select>
+                         {% if messages %}
+                                {% for message in messages %}
+                                <p class="alert alert-{{ message.tags }} text-danger fs-5 p-0">
+                                    {{ message }}
+                                </p>
+                                {% endfor %}
+                        {% endif %}
                     </div>
-                    {% if clothitem.stock >= 0 %}
+                    <input type="hidden" name="in_stock" value="{{clothitem.stock}}">
+                    </form>
+                    {% if clothitem.stock >= 11 %}
                         <h5 class="mb-3 text-success">In stock</h5>
-                    {% else %}
+                    {% elif clothitem.stock >= 1 and clothitem.stock <= 10 %}
+                        <h5 class="mb-3 text-warning">Only few left</h5>
+                    {% elif clothitem.stock == 0 %}
                         <h5 class="mb-3 text-danger">Out of stock</h5>
                     {% endif %}
                 </div>
@@ -84,9 +100,10 @@ Disclaimer: WE HAVE ATTEMPTED TO PROVIDE OUR CUSTOMERS WITH THE NECESSARY INFORM
 
 <div class="container tex-center mb-5">
     <h1>You may also like</h1>
-    <div class="row justify-content-center column-gap-5 mt-4">
+    <div class="row justify-content-center column-gap-lg-4 column-gap-md-3 mt-4">
         {% for i in similaritems %}
-          <div class="card p-0 border-0" style="width: 13rem;">
+        <a href="/{{i.category}}/{{i.item_id}}" class="col-lg-2 col-md-4 col-6 text-decoration-none">
+            <div class="card p-0 border-0 col-12">
             <img src="{{i.images.first.image_url.url}}" class="card-img-top" alt="...">
             <div class="card-body p-0">
               <h5 class="card-title" style="height:3rem;overflow:hidden;">{{i.item_name}}</h5>
@@ -94,6 +111,7 @@ Disclaimer: WE HAVE ATTEMPTED TO PROVIDE OUR CUSTOMERS WITH THE NECESSARY INFORM
               <p><b>MRP {{i.price}}</b></p>
             </div>
           </div>
+        </a>
         {% endfor %}
     </div>
 </div>

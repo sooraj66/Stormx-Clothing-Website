@@ -1,0 +1,76 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static 'login-page.css' %}">
+    <style>
+
+
+        .container-order {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            margin-top:15rem;
+            margin-bottom:15rem;
+        }
+
+        .container-order h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .container-order p {
+            color: #777;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .button-container a {
+            text-decoration: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-container a:first-child {
+            background-color: #3498db;
+        }
+
+        .button-container a:first-child:hover {
+            background-color: #2980b9;
+        }
+
+        .button-container a:last-child {
+            background-color: #2ecc71;
+        }
+
+        .button-container a:last-child:hover {
+            background-color: #27ae60;
+        }
+    </style>
+{% endblock %}
+
+{% block title %}Login or Signup{% endblock %}
+
+{% block content %}
+
+<div class="container container-order">
+        <h1>Thank You!</h1>
+        <p>Your order has been confirmed.</p>
+        <div class="button-container">
+            <a href="/home">Go Shopping</a>
+            <a href="/user-profile#myTab">Go to Orders</a>
+        </div>
+    </div>
+
+{% endblock %}

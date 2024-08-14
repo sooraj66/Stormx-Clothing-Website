@@ -68,36 +68,7 @@
             <!-- Add content for the wishlist here -->
             <p>Your wishlist items will appear here.</p>
 
-             <div class="container">
-                 <div class="row">
-                     {% if wishlist %}
-                     {% for i in wishlist%}
-
-                        <a href="/{{i.cloth_item.category.category_name}}/{{i.cloth_item.item_id}}" class="col-6 text-decoration-none">
-                            <form method="post" action="/deletefromwishlist/{{i.cloth_item.item_id}}" class="col-12">
-                            {% csrf_token %}
-                                <button type="submit" class="btn btn-light p-1" aria-label="remove">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </form>
-                            <div class="card p-0 border-0 col-12" style="">
-                            <img src="{{i.cloth_item.images.first.image_url.url}}" style="border-radius:0;" class="col-12 card-img-top" alt="...">
-                            <div class="card-body p-0">
-                              <h5 class="card-title text-truncate">{{i.cloth_item.item_name}}</h5>
-                              <p class="card-text text-truncate">{{i.cloth_item.description}}</p>
-                              <p><b>Rs:{{i.cloth_item.price}}</b></p>
-                            </div>
-                          </div>
-                        </a>
-                     {% endfor %}
-                     {% else %}
-                        <div class="text-center mt-5 pt-5">
-                            <img src="{% static 'static/images/empty_wishlist.svg' %}" alt="">
-                            <p>Add items to wishlist</p>
-                        </div>
-                     {% endif %}
-                 </div>
-             </div>
+             {% include 'wishlist_items.html'%}
 
         </div>
     </div>

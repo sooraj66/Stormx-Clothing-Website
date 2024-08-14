@@ -5,7 +5,7 @@ from .models import ClothItems,Category,District,State,ItemImages,ClothSpecifica
 
 # admin.py
 from django.contrib import admin
-from .models import Category, ClothItems, ClothSpecification, ItemImages,Size
+from .models import Category, ClothItems, ClothSpecification, ItemImages,Size,District,State
 
 class ClothSpecificationInline(admin.TabularInline):
     model = ClothSpecification
@@ -21,6 +21,14 @@ class ClothItemsAdmin(admin.ModelAdmin):
     search_fields = ('item_name',)
 
 
+class DistrictInline(admin.TabularInline):
+    model = District
+    extra = 1
+class StateAdmin(admin.ModelAdmin):
+    inlines = [DistrictInline]
+    list_display = ('state_name',)
+
+admin.site.register(State, StateAdmin)
 admin.site.register(Category)
 admin.site.register(ClothItems, ClothItemsAdmin)
 admin.site.register(Size)

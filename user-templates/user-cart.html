@@ -32,9 +32,9 @@
                             <img src="{{i.cloth_item.images.first.image_url.url}}" alt="Polo shirt" class="img-fluid" style="width: 100px;">
                         </div>
                         <div class="flex-grow-1">
-                            <p class="mb-1">Size: small</p>
+                            <p class="mb-1">Size: {{i.size}}</p>
                             <p class="mb-1">Color: Beige green</p>
-                            {% if i.cloth_item.stock >= 0 %}
+                            {% if i.cloth_item.stock >= 1 %}
                             <p class="mb-3 text-success">In stock</p>
                             {% else %}
                             <p class="mb-3 text-danger">Out of stock</p>
@@ -49,7 +49,6 @@
                                         {% for num in quantity_range %}
                                          <option value="{{ num }}" {% if i.quantity == num %}selected{% endif %} data-qty-no = {{num}} data-cloth-id = {{i.cloth_item.item_id}} >{{ num }}</option>
                                         {% endfor %}
-
                                     </select>
                                 </div>
                                 <div>
@@ -74,7 +73,19 @@
                     <p><strong>Shipping cost:</strong> Free delivery</p>
                     <p><strong>Tax:</strong> {{overall_tax}}</p>
                     <p><strong>Total:</strong> {{overall_total}}</p>
-                    <button class="btn btn-primary w-100">Checkout</button>
+                    <form method="post" action="{% url 'show_order' %}">
+                        {% csrf_token %}
+                        {% for i in cart_items %}
+                            <input type="hidden" name="cart-identity">
+                            <input type="hidden" name="item_id_{{ forloop.counter }}" value="{{ i.cloth_item.item_id }}">
+                            <input type="hidden" name="quantity_{{ forloop.counter }}" value="{{ i.quantity }}">
+                            <input type="hidden" name="size_{{ forloop.counter }}" value="{{ i.size }}">
+                            <!-- Add any other necessary details -->
+                        {% endfor %}
+                            <input type="hidden" name="total_items" value="{{ cart_items|length }}">
+                            <button type="submit" class="btn btn-primary w-100">Checkout</button>
+                    </form>
+
                 </div>
             </div>
         </div>

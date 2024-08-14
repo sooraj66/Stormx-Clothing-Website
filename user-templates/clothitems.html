@@ -1,0 +1,39 @@
+<div class="row justify-content-center justify-content-md-start">
+    {% if clothitems %}
+            {% for i in clothitems %}
+        <div class="col-lg-3 col-md-4 col-6 mt-3">
+            <a href="/{{i.category}}/{{i.item_id}}" class="col-12 text-decoration-none">
+            <div class="card p-0 border-0">
+            <img src="{{i.images.first.image_url.url}}" class="card-img-top" style="border-radius:0;" alt="..." style="height:25%;">
+            <div class="card-body p-0">
+                <h6 class="card-title m-0" style="font-size:small;color:#000000">Stormx</h6>
+              <h6 class="card-title mb-0" style="font-size:large;color:#0000008a;height:3rem;">{{i.item_name}}</h6>
+<!--              <p class="card-text text-truncate mb-0">{{i.description}}</p>-->
+            </div>
+          </div>
+        </a>
+            <div class="row mt-1 align-items-center">
+                <p class="col-10 m-0"><b>MRP {{i.price}}</b></p>
+                <!-- Heart Button -->
+                <button class="btn col-2 add-to-wishlist" style="color: #e1232394;border-style:none;font-size:large;" data-item-id="{{ i.item_id }}" data-category-id="{{ i.category.category_id }}"><i class="fas fa-heart"></i></button>
+            </div>
+        <span class="me-lg-5 me-0 me-md-2">available in {{i.clothspec.count}} sizes</span>
+            {% if i.stock >= 11 %}
+                <h5 class="mb-3 text-success">In stock</h5>
+            {% elif i.stock >= 1 and i.stock <= 10 %}
+                <h5 class="mb-3 text-warning">Only few left</h5>
+            {% elif i.stock == 0 %}
+                <h5 class="mb-3 text-danger">Out of stock</h5>
+            {% endif %}
+        </div>
+
+
+      {% endfor %}
+    {% else %}
+        <div class="m-5 p-5">
+            <h1><code>No Items Found For Your Search :(</code></h1>
+            <p>Consider Re-filtering!</p>
+        </div>
+    {% endif %}
+
+    </div>

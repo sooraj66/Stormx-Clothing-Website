@@ -1,9 +1,12 @@
-from django.shortcuts import render, redirect
-from AdminApp.models import Category, ClothItems
+from django.shortcuts import render, redirect, HttpResponse, reverse
+from django.template.loader import render_to_string
 
-from .models import User, Wishlist, Cart
+from AdminApp.models import Category, ClothItems, Size, District, State, ItemImages
+
+from .models import User, Wishlist, Cart, Address, Order, OrderItems
 from django.http import JsonResponse, HttpResponseNotFound
 import random
+from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -57,7 +60,8 @@ def home(request):
         random.shuffle(clothitems)
         clothitems = clothitems[:4]
         wishlists = Wishlist.objects.filter(user=user.user_id)
-        return render(request, 'index.html', {"user": user, "category": category, "wishlist": wishlists,"clothitems":clothitems})
+        return render(request, 'index.html',
+                      {"user": user, "category": category, "wishlist": wishlists, "clothitems": clothitems})
     else:
         return redirect('/userlogin')
 
@@ -67,39 +71,66 @@ def show_products(request, id):
         name = request.session['username']
         user = User.objects.get(username=name)
         category = Category.objects.get(category_id=id)
-        clothitems = ClothItems.objects.filter(category=id)
         wishlists = Wishlist.objects.filter(user=user.user_id)
+        clothitems = ClothItems.objects.filter(category=id)
+        sizes = Size.objects.all()
+        if request.method == 'POST':
+            size_id = request.POST.get('size_id')
+            price = request.POST.get('price')
+            category_id = request.POST.get('category_id')
+            if size_id != 0:
+                try:
+                    size = Size.objects.get(size_id=size_id)
+                    clothitems = ClothItems.objects.filter(category=category_id, clothspec__size=size)
+                except Size.DoesNotExist:
+                    clothitems = ClothItems.objects.filter(category=category_id)
+            else:
+                clothitems = ClothItems.objects.filter(category=id)
+
+            if price == 'low':
+                clothitems = clothitems.order_by('price')
+            elif price == 'high':
+                clothitems = clothitems.order_by('-price')
+
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                clothitems_html = render_to_string('clothitems.html', {'clothitems': clothitems})
+                return JsonResponse({'clothitems_html': clothitems_html})
+
         return render(request, 'topwears.html', {
             "user": user,
             "clothitems": clothitems,
             "category": category,
-            "wishlist":wishlists
+            "wishlist": wishlists,
+            "sizes": sizes
         })
     else:
         return redirect('/userlogin')
 
 
-def add_to_wishlist(request,catid,itmid):
+def add_to_wishlist(request, catid, itmid):
     if 'username' in request.session:
         username = request.session['username']
-        user = User.objects.get(username =username)
+        user = User.objects.get(username=username)
         if request.method == 'POST':
-            category = Category.objects.get(category_id = catid)
-            clothitem = ClothItems.objects.get(item_id = itmid)
+            category = Category.objects.get(category_id=catid)
+            clothitem = ClothItems.objects.get(item_id=itmid)
             try:
-                in_wishlist = Wishlist.objects.get(user = user, cloth_item = clothitem)
+                in_wishlist = Wishlist.objects.get(user=user, cloth_item=clothitem)
                 if in_wishlist:
                     return JsonResponse({'message': 'item already in wishlist'})
                 else:
-                    Wishlist.objects.create(user = user, cloth_item = clothitem)
+                    Wishlist.objects.create(user=user, cloth_item=clothitem)
             except Wishlist.DoesNotExist:
                 Wishlist.objects.create(user=user, cloth_item=clothitem)
 
-            return JsonResponse({'message':'success'})
+            wishlist_items = Wishlist.objects.filter(user=user)
+            wishlist_html = render_to_string('wishlist_items.html', {'wishlist': wishlist_items})
+            return JsonResponse({'message': 'success', 'wishlist_html': wishlist_html})
         else:
             return JsonResponse({'message': 'Failed'}, status=400)
     else:
         return redirect('/home')
+
 
 def produt_description(request, category, id):
     if 'username' in request.session:
@@ -108,11 +139,30 @@ def produt_description(request, category, id):
         category = Category.objects.get(category_name=category)
         clothitem = ClothItems.objects.get(item_id=id)
         wishlists = Wishlist.objects.filter(user=user.user_id)
-        similaritems = list(ClothItems.objects.filter(category = category).exclude(item_id = id)) #for shuffling item
+        similaritems = list(ClothItems.objects.filter(category=category).exclude(item_id=id))  #for shuffling item
         random.shuffle(similaritems)
         similaritems = similaritems[:5]
-    return render(request, 'p_desc.html',
-                  {"user": user, "clothitem": clothitem, "category": category, "wishlist": wishlists,"similaritems":similaritems})
+        # if request.method == "POST":
+        #     selected_size = request.POST.get('size_id')
+        #     if selected_size is None:
+        #         return render(request, 'p_desc.html', {
+        #             'clothitem': clothitem,
+        #             "category": category,
+        #             'error_message': 'Please select a size.'
+        #         })
+        #     else:
+        #         size = Size.objects.get(size_id=selected_size)
+        #         return render(request, 'user-order.html', {
+        #             'user':user,
+        #             'clothitem': clothitem,
+        #             'size': size,
+        #             'quantity_range': range(1, 6)
+        #         })
+        return render(request, 'p_desc.html',
+                      {"user": user, "clothitem": clothitem, "category": category, "wishlist": wishlists,
+                       "similaritems": similaritems})
+    else:
+        return redirect('/userlogin')
 
 
 def deletefromwishlist(request, id):
@@ -131,30 +181,141 @@ def deletefromwishlist(request, id):
 def deletefromcart(request, id):
     if 'username' in request.session:
         username = request.session['username']
-        user = User.objects.get(username = username)
+        user = User.objects.get(username=username)
         if request.method == 'POST':
             try:
-                cart_item = Cart.objects.get(user = user.user_id, cloth_item = id)
+                cart_item = Cart.objects.get(user=user.user_id, cloth_item=id)
                 cart_item.delete()
             except ClothItems.DoesNotExist:
                 return HttpResponseNotFound("not found")
     return redirect('/cart')
 
 
-def show_order(request, category, id1):
-    if 'username' in request.session:
-        username = request.session['username']
-        user = User.objects.get(username = username)
-        wishlists = Wishlist.objects.filter(user=user.user_id)
-        try:
-            category = Category.objects.get(category_name=category)
-            clothitem = ClothItems.objects.get(item_id=id1)
-        except ClothItems.DoesNotExist:
-            return HttpResponseNotFound("Cloth item not found")
+# def show_order(request, category, id1):
+#     if request.method == 'POST':
+#         username = request.session.get('username')
+#         if username:
+#             try:
+#                 user = User.objects.get(username=username)
+#                 wishlists = Wishlist.objects.filter(user=user.user_id)
+#                 size_id = request.POST.get("size_id")
+#
+#                 if not size_id:  # Check if size_id is provided
+#                     return JsonResponse({"message": "Please select a size."})
+#
+#                 categoryname = request.POST.get("category_name")
+#                 clothitem_id = request.POST.get("item_id")
+#                 clothitem = ClothItems.objects.get(item_id=clothitem_id)
+#                 category = Category.objects.get(category_name=categoryname)
+#                 size = Size.objects.get(size_id=size_id)
+#
+#                 return render(request, 'user-order.html', {
+#                     "clothitem": clothitem,
+#                     "category": category,
+#                     "size": size,
+#                     "wishlist": wishlists
+#                 })
+#             except (User.DoesNotExist, ClothItems.DoesNotExist, Category.DoesNotExist, Size.DoesNotExist) as e:
+#                 return JsonResponse({"message": "An error occurred while processing the order"})
+#         else:
+#             return JsonResponse({"message": "User not authenticated"})
+#     else:
+#         url = reverse('product_description', args=[category, id1])
+#         return redirect(url)
 
-        return render(request, 'user-order.html', {"clothitem": clothitem,"wishlist":wishlists,"user":user})
+#
+# def buy_now(request, item_id):
+#     cloth_item = ClothItems.objects.get(item_id=item_id)
+#     if request.method == "POST":
+#         selected_size = request.POST.get('size_id')
+#         print(selected_size)
+#         if not selected_size :
+#             return render(request, 'p_desc.html', {
+#                 'clothitem': cloth_item,
+#                 'error_message': 'Please select a size.'
+#             })
+#         else:
+#             size = Size.objects.get(size_id = selected_size)
+#             return render(request, 'user-order.html', {
+#                 'clothitem': cloth_item,
+#                 'size': size,
+#                 'quantity_range': range(1, 6)
+#             })
+#
+#     return render(request, 'p_desc.html', {'clothitem': cloth_item})
+
+
+def show_order(request):
+    if 'username' in request.session:
+        name = request.session['username']
+        user = User.objects.get(username=name)
+        cart_items = Cart.objects.filter(user=user.user_id)
+        wishlists = Wishlist.objects.filter(user=user.user_id)
+        if 'clothitem' in request.session:
+            clothitem_id = request.session.get('clothitem')
+            clothitem = ClothItems.objects.get(item_id=clothitem_id)
+        if 'size' in request.session and request.session['size'] is not None:
+            size_id = request.session.get('size')
+            size = Size.objects.get(size_id=size_id)
+        if request.method == "POST" and 'buy-now-identity' in request.POST:
+            categoryname = request.POST.get("categoryname")
+            item_id = request.POST.get("item_id")
+            category = Category.objects.get(category_name=categoryname)
+            clothitem = ClothItems.objects.get(item_id=item_id)
+            request.session['clothitem'] = clothitem.item_id
+            selected_size = request.POST.get('size_id')
+            request.session['size'] = selected_size
+            in_stock = request.POST.get('in_stock')
+            print(in_stock)
+            if in_stock is not None:
+                if selected_size is None:
+                    messages.error(request, 'Please select size')
+                    return redirect(request.META.get('HTTP_REFERER'))
+                else:
+                    size = Size.objects.get(size_id=selected_size)
+                    return render(request, 'user-order.html', {
+                        'user': user,
+                        'clothitem': clothitem,
+                        'size': size,
+                        'quantity_range': range(1, 6)
+                    })
+
+        elif request.method == 'POST' and 'cart-identity' in request.POST:
+            total_items = int(request.POST.get('total_items', 0))
+            items_data = []
+
+            for i in range(1, total_items + 1):
+                item_id = request.POST.get(f'item_id_{i}')
+                quantity = request.POST.get(f'quantity_{i}')
+                size_id = request.POST.get(f'size_{i}')
+
+                print(item_id,quantity,size_id)
+
+                if item_id and size_id:
+                    item = ClothItems.objects.get(item_id=item_id)
+                    size = Size.objects.get(sizes =size_id)
+                    image = ItemImages.objects.filter(cloth_item=item).first()
+                    print(item,size,image)
+                    items_data.append({
+                        'item': item,
+                        'size': size,
+                        'quantity': quantity,
+                        'image': image
+                    })
+                    print(items_data)
+            context = {
+                'user': user,
+                'items_data': items_data,
+                'quantity_range': range(1, 6),
+                'cart_items':cart_items
+            }
+            return render(request, 'user-order.html', context)
+        return redirect(request.META.get('HTTP_REFERER'))
+
     else:
         return redirect('/userlogin')
+
+
 
 def show_cart(request):
     if 'username' in request.session:
@@ -170,9 +331,9 @@ def show_cart(request):
             item.total_price = item.quantity * item.cloth_item.price
             overall_total += item.total_price + item.tax
         return render(request, 'user-cart.html', {'cart_items': cart_items,
-                                                  "wishlist":wishlists,
+                                                  "wishlist": wishlists,
                                                   'overall_total': overall_total,
-                                                  'overall_tax':overall_tax,
+                                                  'overall_tax': overall_tax,
                                                   'quantity_range': range(1, 6)})
     else:
         return redirect('/userlogin')
@@ -183,13 +344,47 @@ def show_user_profile(request):
     user = User.objects.get(username=username)
     gender_choices = User.GENDER_CHOICES
     wishlist = Wishlist.objects.filter(user=user)
+    district = District.objects.all().order_by('district_name')
+    state = State.objects.all().order_by('state_name')
+    print('hi')
+    print(user)
+    order_items = OrderItems.objects.filter(order__user_id = user.user_id)
+    print(order_items)
     if request.method == 'POST':
-        if 'profilepic' in request.FILES:
-            user.profile_pic = request.FILES.get('profilepic')
+        action = request.POST.get('action')
+        if action == 'update-profile-pic':
+            if 'profilepic' in request.FILES:
+                user.profile_pic = request.FILES.get('profilepic')
+                user.save()
+            else:
+                pass
+        elif action == 'update-address':
+            firstname = request.POST.get('firstname')
+            secondname = request.POST.get('secondname')
+            email = request.POST.get('email')
+            phno = request.POST.get('phno')
+            district_id = request.POST.get('district')
+            district_new = District.objects.get(district_id=district_id)
+            state = request.POST.get('state')
+            gender = request.POST.get('gender')
+            address = request.POST.get('address')
+            pincode = request.POST.get('pincode')
+
+            user.firstname = firstname
+            user.secondname = secondname
+            user.email = email
+            user.gender = gender
+            user.ph_no = phno
             user.save()
-        else:
-            pass
-    return render(request, 'user-profile.html', {'user': user, "gender_choices": gender_choices, "wishlist": wishlist})
+
+            Address.objects.create(user=user, district=district_new, address=address, pin_code=pincode)
+
+    return render(request, 'user-profile.html', {'user': user,
+                                                 "gender_choices": gender_choices,
+                                                 "wishlist": wishlist,
+                                                 "district": district,
+                                                 "state": state,
+                                                 "orderitems":order_items})
 
 
 def change_profile_pic(request):
@@ -204,40 +399,190 @@ def change_profile_pic(request):
 def add_to_cart(request):
     if request.method == 'POST':
         item_id = request.POST.get('item_id')
-        user = request.session['username']
-        if user:
-            user1 = User.objects.get(username=user)
-            cloth_item = ClothItems.objects.get(item_id=item_id)
-
-            try:
-                in_cart = Cart.objects.get(cloth_item=item_id, user=user1)
-
-                if in_cart:
-                    return JsonResponse({'message': 'item already in cart'})
-                else:
-                    new_cart_item = Cart.objects.create(user=user1, cloth_item=cloth_item)
-            except Cart.DoesNotExist:
-                new_cart_item = Cart.objects.create(user=user1, cloth_item=cloth_item)
-            return JsonResponse({'message': 'success'})
+        size_id = request.POST.get('size_id')
+        if size_id == 0:
+            return JsonResponse({'message': 'please select a size'})
         else:
-            return JsonResponse({'message': 'user not authenticated'}, status=401)
+            try:
+                size = Size.objects.get(size_id=size_id)
+                user = request.session['username']
+                if user:
+                    user1 = User.objects.get(username=user)
+                    cloth_item = ClothItems.objects.get(item_id=item_id)
+
+                    try:
+                        in_cart = Cart.objects.get(cloth_item=item_id, user=user1)
+
+                        if in_cart:
+                            return JsonResponse({'message': 'item already in cart'})
+                        else:
+                            new_cart_item = Cart.objects.create(user=user1, cloth_item=cloth_item, size=size)
+                    except Cart.DoesNotExist:
+                        new_cart_item = Cart.objects.create(user=user1, cloth_item=cloth_item, size=size)
+                    return JsonResponse({'message': 'success'})
+                else:
+                    return JsonResponse({'message': 'user not authenticated'}, status=401)
+            except Size.DoesNotExist:
+                return JsonResponse({'message': 'please select a size'})
+            except ValueError:
+                return JsonResponse({'message': 'please select a size'})
     return JsonResponse({'message': 'Failed'}, status=400)
 
 
 def updatequantity(request):
     if 'username' in request.session:
         username = request.session['username']
-        user = User.objects.get(username = username)
+        user = User.objects.get(username=username)
         if request.method == 'POST':
             clothid = request.POST['cloth_id']
             quantity = request.POST['qty']
-            cart_item = Cart.objects.get(user = user, cloth_item = clothid)
-            cart_item.quantity = quantity
-            cart_item.save()
+            try:
+                cart_item = Cart.objects.get(user=user, cloth_item=clothid)
+                cart_item.quantity = quantity
+                cart_item.save()
+            except Cart.DoesNotExist:
+                pass
 
-            return JsonResponse({'message':'qty updated'})
+            return JsonResponse({'message': 'qty updated'})
         else:
-            return JsonResponse({'message':'not updated'})
+            return JsonResponse({'message': 'not updated'})
 
     else:
         return redirect('/userlogin')
+
+
+def update_address(request):
+    if request.method == "POST":
+        name = request.session.get('username')
+        user = User.objects.get(username=name)
+
+        # Get address data from form
+        phone = request.POST.get('phone')
+        pincode = request.POST.get('pincode')
+        state = request.POST.get('state')
+        address = request.POST.get('address')
+        print(f"Phone: {phone}, Pincode: {pincode}, State: {state}, Address: {address}")
+
+        if not address:
+            messages.error(request, 'Address cannot be empty.')
+            return redirect(request.META.get('HTTP_REFERER'))
+
+        # Update user address
+        address_instance = user.my_address.first()
+        address_instance.address = address
+        address_instance.pin_code = pincode
+        address_instance.district.district_name = state  # Assuming the district name is updated in the address
+        address_instance.save()
+
+        # Optionally, update user's phone number as well
+        user.ph_no = phone
+        user.save()
+
+        # Redirect back to the user-order page with updated user information
+        return redirect(request.META.get('HTTP_REFERER'))
+
+    # In case of GET request or other method, redirect to some default page or handle errors
+    return redirect('default_page')
+
+# def confirm_order(request):
+#     username = request.session['username']
+#     user = User.objects.get(username = username)
+#     if request.method == 'POST':
+#         item_name = request.POST.get('clothname')
+#         item_size = request.POST.get('size')
+#         item_price = request.POST.get('price')
+#         item_quantity = request.POST.get('quantity')
+#         user_address = request.POST.get('address')
+#         print(item_name,item_size,item_quantity,item_price,user_address)
+#
+#         item = ClothItems.objects.get(item_name = item_name)
+#         item_total_price = int(item_quantity) * item.price
+#         item_size = Size.objects.get(sizes=item_size)
+#         print(item,item_size,item_total_price)
+#
+#         order_instance = Order()
+#
+#         order_instance.user = user
+#         order_instance.total_price = item_total_price
+#         order_instance.status = 'pending'
+#         order_instance.shipping_address = user_address
+#         order_instance.payment_status = 'paid'
+#         order_instance.save()
+#
+#         order_item_instance = OrderItems()
+#
+#         order_item_instance.order = order_instance
+#         order_item_instance.cloth_item = item
+#         order_item_instance.quantity = int(item_quantity)
+#         order_item_instance.price = int(item_price)
+#         order_item_instance.total_price = int(item_total_price)
+#         order_item_instance.save()
+#
+#         return render(request,'order-confirm.html')
+
+
+def confirm_order(request):
+    username = request.session['username']
+    user = User.objects.get(username=username)
+    cart_items = Cart.objects.filter(user=user.user_id)
+    print("hey")
+    print(cart_items)
+    if request.method == 'POST':
+        # Initialize the order instance
+        order_instance = Order(
+            user=user,
+            status='pending',
+            shipping_address=request.POST.get('address'),
+            payment_status='paid'
+        )
+        order_instance.save()
+
+        # Retrieve all item details from the form
+        items = []
+        item_names = request.POST.getlist('clothname')
+        sizes = request.POST.getlist('size')
+        prices = request.POST.getlist('price')
+        quantities = request.POST.getlist('quantity')
+
+        print("Cloth Names:", item_names)
+        print("Sizes:", sizes)
+        print("Prices:", prices)
+        print("Quantities:", quantities)
+
+        total_order_price = 0
+
+        for item_name, item_size, item_price, item_quantity in zip(item_names, sizes, prices, quantities):
+            print('hi')
+            print(item_name,item_size,item_price,item_quantity)
+            item = ClothItems.objects.get(item_name=item_name)
+            item_size_obj = Size.objects.get(sizes=item_size)
+            item_total_price = int(item_quantity) * int(item_price)
+
+            # Update total order price
+            total_order_price += item_total_price
+
+            # Create OrderItems instance for each item
+            order_item_instance = OrderItems(
+                order=order_instance,
+                cloth_item=item,
+                size=item_size_obj,
+                quantity=int(item_quantity),
+                price=int(item_price),
+                total_price=item_total_price
+            )
+            order_item_instance.save()
+
+            # Add item to the items list
+            items.append({
+                'item_name': item.item_name,
+                'size': item_size,
+                'quantity': item_quantity,
+                'price': item_price
+            })
+
+        # Update the total price in the order instance
+        order_instance.total_price = total_order_price
+        order_instance.save()
+
+        # Pass the items list to the template
+        return render(request, 'order-confirm.html', {'items': items,'cart_items':cart_items})

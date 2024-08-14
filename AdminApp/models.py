@@ -35,7 +35,7 @@ class Size(models.Model):
 
 class ClothSpecification(models.Model):
     item_spec_id = models.AutoField(primary_key = True)
-    cloth_item = models.ForeignKey(ClothItems, on_delete=models.CASCADE, related_name='size')
+    cloth_item = models.ForeignKey(ClothItems, on_delete=models.CASCADE, related_name='clothspec')
     size = models.ForeignKey(Size, on_delete=models.CASCADE, null=True)
 
 
@@ -52,5 +52,5 @@ class State(models.Model):
 
 class District(models.Model):
     district_id = models.AutoField(primary_key=True)
-    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    state = models.ForeignKey(State, on_delete=models.CASCADE,related_name='subdistrict')
     district_name = models.CharField(max_length=100)

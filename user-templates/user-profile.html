@@ -1,150 +1,210 @@
 {% extends 'header.html' %}
 {% load static %}
-{% block meta %}<link rel="stylesheet" href="{% static 'user-profile.css' %}">{% endblock %}
+{% block meta %}
+<link rel="stylesheet" href="{% static 'user-profile.css' %}">
+{% endblock %}
 
-{% block title %}Home{% endblock %}
+{% block title %}User Profile{% endblock %}
 
 {% block content %}
 
 <div class="main-content">
-        <div class="inner-div container">
-            <div class="row">
-                <!-- First Main Div -->
-                <div class="col-12 col-md-6 d-flex flex-column">
-                    <!-- Profile Image -->
-                    <div class="img-container d-flex flex-column align-items-center">
-                        {% if user.profile_pic %}
-                            <img src="{{ user.profile_pic.url }}" alt="Profile Picture" class="profile-img b-1">
-                        {% else %}
-                            <img src="{% static 'static/images/profile-user-icon.jpg' %}" alt="Default Profile Picture" class="profile-img b-1">
-                        {% endif %}
-
-                        <form action="/user-profile" method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <input type="file" name="profilepic" placeholder="upload pic">
-                            <button type="submit">submit</button>
-                        </form>
-                    </div>
-
-                    <!-- Form Section -->
-                    <div class="form-section">
-                        <form action="">
-                            <div class="form-group row">
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" value="{{user.firstname}}" placeholder="First Name">
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" value="{{user.secondname}}" placeholder="Second Name">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <div class="col-12">
-                                    <input type="password" class="form-control" value="{{user.password}}" placeholder="Password">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <div class="col-12">
-                                    <input type="email" class="form-control" value="{{user.email}}" placeholder="Email">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <div class="col-12">
-                                    <input type="text" class="form-control" value="" placeholder="Phone No">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="District">
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="State">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Second Main Div -->
-                <div class="col-12 col-md-6 d-flex flex-column">
-                    <div class="form-section">
-                        <form action="">
-                            <div class="form-group row">
-                                <div class="col-md-6">
-                                    <select id="category" name="gender" class="form-control">
-                                        <option value="" disabled selected>Choose gender</option>
-                                        {% for choice in gender_choices %}
-                                            <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                                        {% endfor %}
-                                    </select>
-
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="Language">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <div class="col-md-6">
-                                    <input type="date" class="form-control" placeholder="Date of Birth">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <div class="col-12">
-                                    <input type="text" class="form-control" placeholder="Address">
-                                </div>
-                            </div>
-                            <a href="#">Add Address +</a>
-                        </form>
-                    </div>
+    <div class="inner-div container mt-5">
+        <div class="row mb-5">
+            <!-- First Main Div -->
+            <div class="col-12 col-md-4 text-center" style="background: linear-gradient(45deg, #b43a3a, transparent);
+    border-radius: 2%">
+                <!-- Profile Image -->
+                <div class="img-container">
+                    {% if user.profile_pic %}
+                        <img src="{{ user.profile_pic.url }}" alt="Profile Picture" class="profile-img rounded-circle shadow" style="max-width:50%">
+                    {% else %}
+                        <img src="{% static 'static/images/profile-user-icon.jpg' %}" alt="Default Profile Picture" class="profile-img rounded-circle shadow" style="max-width:50%">
+                    {% endif %}
+                    <form action="/user-profile" method="post" enctype="multipart/form-data" class="mt-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="update-profile-pic">
+                        <input type="file" name="profilepic" class="form-control-file" accept="image/jpeg">
+                        <button type="submit" class="btn btn-primary mt-2">Update Picture</button>
+                    </form>
                 </div>
             </div>
 
-            <!-- Category Tabs -->
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="wishlist-tab" data-bs-toggle="tab" href="#wishlist" role="tab" aria-controls="wishlist" aria-selected="true">Wishlist</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab" aria-controls="orders" aria-selected="false">Orders</a>
-                </li>
-            </ul>
+            <!-- Form Section -->
+            <div class="col-12 col-md-8">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update-address">
+                    <div class="form-section bg-light p-4 rounded shadow-sm">
+                        <h4 class="mb-4">Personal Information</h4>
 
-            <!-- Tab Content -->
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="wishlist" role="tabpanel" aria-labelledby="wishlist-tab">
-                    {% for i in wishlist%}
-                    <div class="item">
-                        <img src="{{i.cloth_item.images.first.image_url.url}}" alt="Wishlist Item">
-                        <div class="item-details">
-                            <h5>{{i.cloth_item.item_name}}</h5>
-                            <p class="">{{i.cloth_item.description}}</p>
+                        <div class="form-group row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstname">First Name</label>
+                                <input type="text" class="form-control" value="{{user.firstname}}" name="firstname" placeholder="First Name">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="secondname">Second Name</label>
+                                <input type="text" class="form-control" value="{{user.secondname}}" name="secondname" placeholder="Second Name">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" value="{{user.email}}" name="email" placeholder="Email">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phno">Phone No</label>
+                                <input type="text" class="form-control" value="{{user.ph_no}}" name="phno" placeholder="Phone No">
+                            </div>
+                        </div>
+
+                        <h4 class="mb-4">Address Information</h4>
+
+                        <div class="form-group row">
+                            <div class="col-md-6 mb-3">
+                                <label for="state-select">State</label>
+                                <select name="state" id="state-select" class="form-control">
+                                    <option value="">Select state</option>
+                                    {% for i in state %}
+                                    <option value="{{i.state_id}}">{{i.state_name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="district-select">District</label>
+                                <select name="district" id="district-select" class="form-control">
+                                    <option value="">Select District</option>
+                                    {% for i in district %}
+                                    <option value="{{i.district_id}}">{{i.district_name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6 mb-3">
+                                <label for="pincode">Pincode</label>
+                                <input type="text" class="form-control" value="{{user.my_address.first.pin_code}}" name="pincode" placeholder="Pincode">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="address">Permanent Address</label>
+                                <input type="text" class="form-control" value="{{user.my_address.first.address}}" name="address" placeholder="Address">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6 mb-3">
+                                <label for="gender">Gender</label>
+                                <select name="gender" class="form-control">
+                                    <option value="{{user.gender}}" disabled selected>Choose gender</option>
+                                    {% for choice in gender_choices %}
+                                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="dob">Date of Birth</label>
+                                <input type="date" class="form-control" value="{{user.dob}}" name="dob" placeholder="Date of Birth">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6 mb-3">
+                                <label for="language">Language</label>
+                                <input type="text" class="form-control" value="{{user.language}}" name="language" placeholder="Language">
+                            </div>
+                        </div>
+
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-success mt-4">Save Changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <ul class="nav nav-tabs mt-5" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link " id="wishlist-tab" data-bs-toggle="tab" href="#wishlist" role="tab" aria-controls="wishlist" aria-selected="true">Wishlist</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab" aria-controls="orders" aria-selected="false">Orders</a>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content mt-3" id="myTabContent">
+            <div class="tab-pane fade" id="wishlist" role="tabpanel" aria-labelledby="wishlist-tab">
+                <div class="row">
+                    {% for i in wishlist %}
+                    <div class="col-6 col-md-4 col-lg-3 mb-4">
+                        <div class="card shadow-sm">
+                            <img src="{{i.cloth_item.images.first.image_url.url}}" class="card-img-top" alt="Wishlist Item">
+                            <div class="card-body">
+                                <h5 class="card-title">{{i.cloth_item.item_name}}</h5>
+                                <p class="card-text text-truncate">{{i.cloth_item.description}}</p>
+                                <a href="#" class="btn btn-primary">View Details</a>
+                            </div>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
-                <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
-                    <div class="item">
-                        <img src="" alt="Order Item">
-                        <div class="item-details">
-                            <h5>Item Name</h5>
-                            <p>Item Description</p>
+            </div>
+            <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                <div class="row">
+
+                    {% for order in orderitems %}
+
+                    <div class="pt-0 pb-0 ps-4 pe-4  mb-4 border pt-2">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <a href="/{{i.cloth_item.category.category_name}}/{{i.cloth_item.item_id}}" class="text-dark text-decoration-none flex-grow-1">{{order.cloth_item.item.name}}</a>
+                        <form method="post" action="/deletefromcart/{{i.cloth_item.item_id}}">
+                            {% csrf_token %}
+                            <button type="submit" class="text-danger p-1" aria-label="remove">
+                               cancel order x
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <img src="{{order.cloth_item.images.first.image_url.url}}" alt="Polo shirt" class="img-fluid" style="width: 100px;">
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-1">Size: {{order.size}}</p>
+                            <p class="mb-1">Color: Beige green</p>
+                            {% if i.cloth_item.stock >= 1 %}
+                            <p class="mb-3 text-success">In stock</p>
+                            {% else %}
+                            <p class="mb-3 text-danger">Out of stock</p>
+                            {% endif %}
+                            <div class="d-flex justify-content-between">
+                                <div class="row">
+                                    <p class="col-12">MRP: {{order.price}}</p>
+                                </div>
+                                <div>
+                                    <p class="text-success">Status: {{order.order.status}}</p>
+                                </div>
+                                <div>
+                                   <p>Qty: {{order.quantity}}</p>
+                                </div>
+                                <div>
+                                    <p class="mb-1">Total</p>
+                                    <p><b>MRP:</b> {{order.total_price}}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="item">
-                        <img src="" alt="Order Item">
-                        <div class="item-details">
-                            <h5>Item Name</h5>
-                            <p>Item Description</p>
-                        </div>
-                    </div>
+                </div>
+
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 {% endblock %}
