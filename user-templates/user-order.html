@@ -26,6 +26,13 @@
                     <h5 class="mb-1">DELIVERY ADDRESS</h5>
                     <p>{{user.firstname}} {{user.secondname}} --, {{user.my_address.first.address}}, {{user.my_address.first.district.district_name}}, Kerala -
                         {{user.my_address.first.pin_code}}</p>
+                    {% if messages %}
+                                {% for message in messages %}
+                                <p class="alert alert-{{ message.tags }} text-danger fs-5 p-0">
+                                    {{ message }}
+                                </p>
+                                {% endfor %}
+                        {% endif %}
                     <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addressModal">CHANGE</button>
                 </div>
 
@@ -35,7 +42,7 @@
                     <div class="mb-3">
                         <p class="mb-1">Pay Using SuperCoins</p>
                         <p>Balance: 52 <span class="badge bg-warning">Save ₹40 using 40 SuperCoins</span></p>
-                        <button class="btn btn-primary btn-sm">APPLY</button>
+                        <button class="btn btn-primary btn-sm" >APPLY</button>
                     </div>
                     {% if clothitem %}
                     <div class="d-flex align-items-center mb-3 border p-2">
@@ -45,10 +52,10 @@
                             <p class="mb-1">Size:{{size.sizes}}</p>
                             <p class="mb-1">Seller: STORMx</p>
                             <p class="mb-1">Delivery by Sat Aug 17 <span class="text-success">Free</span></p>
-                            <p class="mb-1"> <span class="text-danger fw-bold">${{clothitem.price}}</span> <span class="badge bg-success">78% Off</span> <span class="badge bg-info">1 offer applied</span></p>
+                            <p class="mb-1"> <span class="text-danger fw-bold">₹{{clothitem.price}} (per item)</span></p>
                             <div class="d-flex align-items-center">
                                 <div>
-                                    <label for="quantity" class="form-label">Qty:</label>
+                                    <label class="form-label">Qty:</label>
                                     <select class="form-control w-auto d-inline-block order-quantity" name="quantity">
                                         {% for num in quantity_range %}
                                          <option value="{{ num }}"  data-qty-no = {{num}} data-cloth-id = {{clothitem.item_id}} >{{ num }}</option>
@@ -82,7 +89,7 @@
 
 
 
-                    <p>Order confirmation email will be sent to soorajsundaran66@gmail.com</p>
+                    <p>Order confirmation email will be sent to your email</p>
                     <form action="{% url 'confirm_order' %}" method="post">
                         {% csrf_token %}
 
@@ -105,8 +112,9 @@
 
                         {% endfor %}
                         {% endif %}
-                    <input type="hidden" name="address" value="{{user.my_address.first.address}}">
-                    <button type="submit" class="btn btn-warning btn-block">CONTINUE</button>
+                        <input type="hidden" name="address" value="{{user.my_address.first.address}}">
+                    <button type="submit" class="btn btn-warning btn-block">CONTINUE TO PAYMENT</button>
+
                     </form>
 
 
@@ -115,59 +123,59 @@
                 </div>
 
                 <!-- Payment Options Section -->
-                <div class="p-3 mb-3 border rounded">
-                    <h5 class="mb-3">PAYMENT OPTIONS <button class="btn btn-outline-primary btn-sm">CHANGE</button></h5>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="creditCardOption" value="creditCard">
-                        <label class="form-check-label" for="creditCardOption">Credit Card</label>
-                        <!-- Credit Card Option -->
-                    <div id="creditCard" class="payment-option">
-                        <div class="mb-3">
-                            <label for="cvv" class="form-label">Enter CVV</label>
-                            <input type="text" class="form-control" id="cvv" placeholder="CVV">
-                        </div>
-                        <button class="btn btn-primary">Continue</button>
-                    </div>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="upiOption" value="upi">
-                        <label class="form-check-label" for="upiOption">UPI</label>
-                        <!-- UPI Option -->
-                    <div id="upi" class="payment-option">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="upiMethod" id="gpayOption" value="gpay">
-                            <label class="form-check-label" for="gpayOption">GPay</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="upiMethod" id="phonePayOption" value="phonePay">
-                            <label class="form-check-label" for="phonePayOption">PhonePe</label>
-                        </div>
-                        <div class="mt-3">
-                            <label for="upiId" class="form-label">Enter UPI ID</label>
-                            <input type="text" class="form-control" id="upiId" placeholder="UPI ID">
-                        </div>
-                        <button class="btn btn-primary mt-3">Pay</button>
-                    </div>
+<!--                <div class="p-3 mb-3 border rounded">-->
+<!--                    <h5 class="mb-3">PAYMENT OPTIONS <button class="btn btn-outline-primary btn-sm">CHANGE</button></h5>-->
+<!--                    <div class="form-check">-->
+<!--                        <input class="form-check-input" type="radio" name="paymentMethod" id="creditCardOption" value="creditCard">-->
+<!--                        <label class="form-check-label" for="creditCardOption">Credit Card</label>-->
+<!--                        &lt;!&ndash; Credit Card Option &ndash;&gt;-->
+<!--                    <div id="creditCard" class="payment-option">-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="cvv" class="form-label">Enter CVV</label>-->
+<!--                            <input type="text" class="form-control" id="cvv" placeholder="CVV">-->
+<!--                        </div>-->
+<!--                        <button class="btn btn-primary">Continue</button>-->
+<!--                    </div>-->
+<!--                    </div>-->
+<!--                    <div class="form-check">-->
+<!--                        <input class="form-check-input" type="radio" name="paymentMethod" id="upiOption" value="upi">-->
+<!--                        <label class="form-check-label" for="upiOption">UPI</label>-->
+<!--                        &lt;!&ndash; UPI Option &ndash;&gt;-->
+<!--                    <div id="upi" class="payment-option">-->
+<!--                        <div class="form-check">-->
+<!--                            <input class="form-check-input" type="radio" name="upiMethod" id="gpayOption" value="gpay">-->
+<!--                            <label class="form-check-label" for="gpayOption">GPay</label>-->
+<!--                        </div>-->
+<!--                        <div class="form-check">-->
+<!--                            <input class="form-check-input" type="radio" name="upiMethod" id="phonePayOption" value="phonePay">-->
+<!--                            <label class="form-check-label" for="phonePayOption">PhonePe</label>-->
+<!--                        </div>-->
+<!--                        <div class="mt-3">-->
+<!--                            <label for="upiId" class="form-label">Enter UPI ID</label>-->
+<!--                            <input type="text" class="form-control" id="upiId" placeholder="UPI ID">-->
+<!--                        </div>-->
+<!--                        <button class="btn btn-primary mt-3">Pay</button>-->
+<!--                    </div>-->
 
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="cashOnDeliveryOption" value="cashOnDelivery">
-                        <label class="form-check-label" for="cashOnDeliveryOption">Cash on Delivery</label>
+<!--                    </div>-->
+<!--                    <div class="form-check">-->
+<!--                        <input class="form-check-input" type="radio" name="paymentMethod" id="cashOnDeliveryOption" value="cashOnDelivery">-->
+<!--                        <label class="form-check-label" for="cashOnDeliveryOption">Cash on Delivery</label>-->
 
-                        <!-- Cash on Delivery Option -->
-                    <div id="cashOnDelivery" class="payment-option">
-                        <div class="mb-3">
-                            <label for="captcha" class="form-label">Enter Captcha</label>
-                            <input type="text" class="form-control" id="captcha" placeholder="Enter Captcha">
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirmCaptcha" class="form-label">Re-enter Captcha</label>
-                            <input type="text" class="form-control" id="confirmCaptcha" placeholder="Re-enter Captcha">
-                        </div>
-                        <button class="btn btn-primary">Confirm</button>
-                    </div>
-                    </div>
-                </div>
+<!--                        &lt;!&ndash; Cash on Delivery Option &ndash;&gt;-->
+<!--                    <div id="cashOnDelivery" class="payment-option">-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="captcha" class="form-label">Enter Captcha</label>-->
+<!--                            <input type="text" class="form-control" id="captcha" placeholder="Enter Captcha">-->
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+<!--                            <label for="confirmCaptcha" class="form-label">Re-enter Captcha</label>-->
+<!--                            <input type="text" class="form-control" id="confirmCaptcha" placeholder="Re-enter Captcha">-->
+<!--                        </div>-->
+<!--                        <button class="btn btn-primary">Confirm</button>-->
+<!--                    </div>-->
+<!--                    </div>-->
+<!--                </div>-->
             </div>
 
             <!-- Price Details Sidebar -->

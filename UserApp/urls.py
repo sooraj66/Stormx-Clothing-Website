@@ -13,6 +13,7 @@ urlpatterns = [
     path('deletefromcart/<int:id>',views.deletefromcart),
     path('<int:catid>/<int:itmid>',views.add_to_wishlist),
     path('deletefromwishlist/<int:id>',views.deletefromwishlist),
+    path('delete-ordered-item/<int:id>/<int:orderid>',views.delete_order_item,name='deleteorderitem'),
     path('<str:category>/<int:id>',views.produt_description, name='product_description'),
     path('delete/<int:id>',views.deletefromwishlist),
     path('order',views.show_order,name ='show_order' ),
@@ -21,7 +22,10 @@ urlpatterns = [
     path('add-to-cart',views.add_to_cart),
     path('updateQuantity',views.updatequantity),
     path('update_address', views.update_address, name='update_address'),
-    path('confirm-order',views.confirm_order,name='confirm_order')
+    path('confirm-order',views.confirm_order,name='confirm_order'),
+    path('payment_handler/<int:order>/<int:user>', views.payment_handler, name='payment_handler'),
+    path('newuser',views.otp_page),
+    path('newuser/verify-otp',views.verify_otp)
     # path('buy-now/<int:item_id>/', views.buy_now, name='buy_now'),
     # path('changeprofilepic',views.change_profile_pic)
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

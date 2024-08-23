@@ -20,6 +20,12 @@
                         <img src="{{ image.image_url.url }}" class="d-block w-100" alt="{{ item.item_name }}">
                     </div>
                     {% endfor %}
+
+<!--                    {% for image in clothitem.images.all %}-->
+<!--                    <div>-->
+<!--                        <img src="{{ image.image_url.url }}" alt="{{ item.item_name }}">-->
+<!--                    </div>-->
+<!--                    {% endfor %}-->
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
                   <span class="carousel-control-prev-icon" style="background-color: #28282814;" aria-hidden="true"></span>
@@ -30,6 +36,15 @@
                   <span class="visually-hidden">Next</span>
                 </button>
               </div>
+
+                    <div class="row d-flex mt-3">
+                        {% for image in clothitem.images.all %}
+                        <div class="col-4" style="overflow:hidden;">
+                        <img src="{{ image.image_url.url }}" alt="{{ item.item_name }}" class="img-fluid">
+                        </div>
+                        {% endfor %}
+                    </div>
+
         </div>
         <div class="desc_main_div row col-md-7 ms-2" style="flex-direction: column;line-height: 30px;">
             <h1 style="font-size: 3rem;">{{clothitem.item_name}}</h1>
@@ -61,11 +76,14 @@
                         </select>
                          {% if messages %}
                                 {% for message in messages %}
-                                <p class="alert alert-{{ message.tags }} text-danger fs-5 p-0">
+                                <p class="alert alert-{{ message.tags }} text-danger fs-5 p-0" style="font-weight:600">
                                     {{ message }}
                                 </p>
                                 {% endfor %}
                         {% endif %}
+
+                            <p id="wishlist-message" class="" style="font-weight:600"></p> <!-- Message Container -->
+
                     </div>
                     <input type="hidden" name="in_stock" value="{{clothitem.stock}}">
                     </form>
@@ -82,7 +100,7 @@
                     <li>Cotton Blend</li>
                     <li>Dry Clean</li>
                 </div>
-            <div><h2>35 Days Return Available</h2></div>
+            <div class="mt-2"><h2>35 Days Return Available</h2></div>
                 <div class="mt-4">
                     <h3>SPECIFICATIONS</h3>
                     <p>Name and address of the manufacturer(s): Haritha Apparel Limited No 119/1/1 Negombo Road Kandana
@@ -91,8 +109,8 @@ Generic Type: Shirt
 Pack Size: 1N
 Net Quantity: NA
 MRP: Inclusive of all taxes
-Name and address of importer/marketer: MARKS & SPENCER RELIANCE INDIA PVT LTD GROUND FLOOR INFINITY TOWER C DLF CYBER CITY PHASE II GURGAON HARYANA-122002
-Disclaimer: WE HAVE ATTEMPTED TO PROVIDE OUR CUSTOMERS WITH THE NECESSARY INFORMATION ABOUT THE PRODUCT SO THAT THEY MAY BE ABLE TO MAKE AN INFORMED DECISION TO PURCHASE THE PRODUCTS CHOSEN BY THEM. HOWEVER, THE INFORMATION PROVIDED HEREIN IS ON SAMPLE BASIS AND THE ACTUAL INFORMATION RELATING TO THE MANUFACTURER, IMPORT DATE, COUNTRY OF MANUFACTURING ETC. MAY VARY FROM THE INFORMATION GIVEN ON THE LABEL ATTACHED TO THE PRODUCT ACTUALLY DELIVERED TO THE CUSTOMER BASED ON FACTORS LIKE CHOICE OF COLOUR, SIZE, ETC. THE EXACT DETAIL RELEVANT TO THE PRODUCT DELIVERED TO THE CUSTOMER WILL REFLECT IN THE LABEL ATTACHED TO THE PRODUCT SO DELIVERED.</p>
+Name and address of importer/marketer: STORMx INDIA PVT LTD GROUND FLOOR TRANS ASIA C DLF CYBER CITY PHASE II MADGAON GOA-122002
+</p>
                 </div>
         </div>
     </div>
@@ -100,7 +118,7 @@ Disclaimer: WE HAVE ATTEMPTED TO PROVIDE OUR CUSTOMERS WITH THE NECESSARY INFORM
 
 <div class="container tex-center mb-5">
     <h1>You may also like</h1>
-    <div class="row justify-content-center column-gap-lg-4 column-gap-md-3 mt-4">
+    <div class="row justify-content-center column-gap-lg-4 column-gap-md-3 mt-4 row-gap-lg-4 row-gap-md-3">
         {% for i in similaritems %}
         <a href="/{{i.category}}/{{i.item_id}}" class="col-lg-2 col-md-4 col-6 text-decoration-none">
             <div class="card p-0 border-0 col-12">
@@ -116,17 +134,59 @@ Disclaimer: WE HAVE ATTEMPTED TO PROVIDE OUR CUSTOMERS WITH THE NECESSARY INFORM
     </div>
 </div>
 
-<div class="container tex-center mb-5">
-    <h1>Review</h1>
-    <div class="row justify-content-center column-gap-5 mt-4">
-        <p>add a review</p>
+<!--review section-->
+<div class="container text-start mb-5">
+    <h1 class="mb-4">Reviews</h1>
 
-          <div class="card p-0 border-0" style="width: 13rem;">
+    <div class="row justify-content-start">
+        <!-- User Review Form -->
+        <div class="col-lg-6 col-md-8 col-12 mb-4">
+            <h3>Add a Review</h3>
+            <form method="post" action=>
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="reviewText" class="form-label">Your Review</label>
+                    <textarea class="form-control" id="reviewText" name="review_text" rows="4" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="rating" class="form-label">Rating</label>
+                    <select class="form-select" id="rating" name="rating" required>
+                        <option value="" disabled selected>Choose rating</option>
+                        <option value="1">1 - Poor</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="3">3 - Good</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="5">5 - Excellent</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-dark w-100">Submit Review</button>
+            </form>
+        </div>
+    </div>
 
-          </div>
+    <!-- Display Reviews -->
+    <div class="row justify-content-center">
+<!--        {% for review in reviews %}-->
+        <div class="col-lg-4 col-md-6 col-12 mb-4">
+            <div class="card border-light h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ review.user.username }}</h5>
+                    <p class="card-text">{{ review.review_text }}</p>
+                    <div>
 
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+<!--                    Reviewed on {{ review.created_at|date:"F j, Y" }}-->
+                </div>
+            </div>
+        </div>
+<!--        {% empty %}-->
+        <p>No reviews yet. Be the first to review this product!</p>
+<!--        {% endfor %}-->
     </div>
 </div>
+
 <!-- content end -->
 {% endblock %}
 

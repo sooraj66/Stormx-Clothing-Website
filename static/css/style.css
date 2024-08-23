@@ -37,6 +37,7 @@
             }
             .navbar-collapse.show {
                 right: 0;
+                margin-top:64px
             }
         }
         .nav-link{
@@ -342,5 +343,3 @@
         /* trending now end */
 
 /* Add any additional styles for the offcanvas sidebar here */
-
-

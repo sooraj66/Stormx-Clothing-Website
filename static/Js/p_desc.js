@@ -45,13 +45,16 @@ $('#add-to-cart').click(function() {
         },
         success: function(response) {
             if (response.message === "item already in cart"){
-                alert('Item already in cart');
+                $('#wishlist-message').text('Item already in cart');
+                $('#wishlist-message').css('color','orange');
             }
             else if (response.message === 'please select a size'){
-                alert('please select a size')
+                $('#wishlist-message').text('please select size');
+                $('#wishlist-message').css('color','red');
             }
             else {
-                alert('Item added to cart');
+                $('#wishlist-message').text('Item added to cart');
+                $('#wishlist-message').css('color','green');
             }
         },
         error: function(error) {
@@ -75,9 +78,11 @@ $('.add-to-wishlist').click(function() {
         },
         success: function(response) {
             if (response.message === "item already in wishlist"){
-                alert('Item already in wishlist');
+                $('#wishlist-message').text('Item already in wishlist');
+                $('#wishlist-message').css('color','orange');
             } else {
-                alert('Item added to wishlist');
+                $('#wishlist-message').text('Item added to wishlist');
+                $('#wishlist-message').css('color','green');
                 $('.offcanvas-body').html(response.wishlist_html);
             }
         },
@@ -125,7 +130,7 @@ console.log("hi")
             'cloth_id': clothId,
         },
         success: function(response) {
-            alert("quantity-updated")
+            pass
         },
         error: function(response) {
             alert('Something went wrong');

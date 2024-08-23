@@ -1,0 +1,27 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block meta %}<link rel="stylesheet" href="{% static 'login-page.css' %}">{% endblock %}
+
+{% block title %}Login or Signup{% endblock %}
+
+{% block content %}
+<main class="main-content d-flex flex-column flex-md-row align-items-center justify-content-center">
+    <div class="img-container d-none d-md-block " style="width: 40%;">
+        <img src="{% static 'images/vlad-braga-ncJqytU7ydc-unsplash.jpg' %}" alt="Login Image" class="img-fluid" style="width: 100%; height: auto; object-fit: cover;">
+    </div>
+    <div class="d-flex flex-column align-items-center logindiv">
+
+        <form id="" method="post" class="d-flex flex-column loginform mb-5">
+            {% csrf_token %}
+            <label for="">Enter your email:</label>
+            <input type="email" name="email" placeholder="enter email" class="form-control p-2" style="border-radius: 10px;">
+            <button type="submit" value="sendotp" class="btn text-white" style="background-color: #282828; color: white; padding: 10px 30px; border-radius: 10px;">Send OTP</button>
+        </form>
+        <p class="mt-2">already have an account? <a href="/userlogin">login</a></p>
+        <p class="mt-1">Payments are secured and encrypted</p>
+        <p>Terms & conditions apply</p>
+    </div>
+</main>
+{% endblock %}
+
+

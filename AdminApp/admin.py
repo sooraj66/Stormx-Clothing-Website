@@ -5,7 +5,7 @@ from .models import ClothItems,Category,District,State,ItemImages,ClothSpecifica
 
 # admin.py
 from django.contrib import admin
-from .models import Category, ClothItems, ClothSpecification, ItemImages,Size,District,State
+from .models import Category, ClothItems, ClothSpecification, ItemImages,Size,District,State,Admin
 
 class ClothSpecificationInline(admin.TabularInline):
     model = ClothSpecification
@@ -32,7 +32,7 @@ admin.site.register(State, StateAdmin)
 admin.site.register(Category)
 admin.site.register(ClothItems, ClothItemsAdmin)
 admin.site.register(Size)
-
+admin.site.register(Admin)
 
 
 

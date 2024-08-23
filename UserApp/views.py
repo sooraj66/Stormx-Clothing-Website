@@ -1,16 +1,55 @@
-from django.shortcuts import render, redirect, HttpResponse, reverse
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 
 from AdminApp.models import Category, ClothItems, Size, District, State, ItemImages
 
-from .models import User, Wishlist, Cart, Address, Order, OrderItems
-from django.http import JsonResponse, HttpResponseNotFound
+from .models import User, Wishlist, Cart, Address, Order, OrderItems, OTP, PaymentModel
+from django.http import JsonResponse, HttpResponseNotFound, HttpResponseBadRequest
 import random
 from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta
+from django.core.mail import send_mail
+from django.core.paginator import Paginator
+import razorpay
+from project import settings
 from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
+def otp_page(request):
+    if request.method == 'POST':
+        mail = request.POST.get('email')
+        request.session['mail'] = mail
+        if not OTP.objects.filter(mail=mail).exists():
+            otp = OTP()
+            otp.generate_otp(mail)
+            print(timezone.now())
+            print(timedelta(minutes=10))
+            send_mail(
+                'Your OTP for Signup',
+                f'Your OTP is {otp.otp}',
+                'soorajsundaran66@gmail.com',
+                [mail],
+                fail_silently=False,
+            )
+
+            return redirect('/newuser/verify-otp')
+        else:
+            pass
+    return render(request, 'otp-page.html')
+
+
+def verify_otp(request):
+    if request.method == 'POST':
+        mail = request.session['mail']
+        otp = OTP.objects.get(mail=mail)
+        otp_received = request.POST.get('otp-received')
+        otp.verify_otp(otp_received)
+        otp.delete()
+        return redirect('/usersignup')
+    return render(request, 'verify-otp.html')
+
 
 def user_login(request):
     message = 'valid'
@@ -53,9 +92,9 @@ def user_logout(request):
 
 def home(request):
     if 'username' in request.session:
+        username = request.session['username']
         category = Category.objects.all()
-        name = request.session['username']
-        user = User.objects.get(username=name)
+        user = User.objects.get(username=username)
         clothitems = list(ClothItems.objects.all())
         random.shuffle(clothitems)
         clothitems = clothitems[:4]
@@ -68,11 +107,18 @@ def home(request):
 
 def show_products(request, id):
     if 'username' in request.session:
+
+        page = 1
+        if request.GET:
+            page = request.GET.get('page', 1)
         name = request.session['username']
         user = User.objects.get(username=name)
         category = Category.objects.get(category_id=id)
         wishlists = Wishlist.objects.filter(user=user.user_id)
         clothitems = ClothItems.objects.filter(category=id)
+        product_paginator = Paginator(clothitems, 2)
+        clothitems = product_paginator.get_page(page)
+
         sizes = Size.objects.all()
         if request.method == 'POST':
             size_id = request.POST.get('size_id')
@@ -91,6 +137,9 @@ def show_products(request, id):
                 clothitems = clothitems.order_by('price')
             elif price == 'high':
                 clothitems = clothitems.order_by('-price')
+
+            product_paginator = Paginator(clothitems, 2)
+            clothitems = product_paginator.get_page(page)
 
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 clothitems_html = render_to_string('clothitems.html', {'clothitems': clothitems})
@@ -117,6 +166,7 @@ def add_to_wishlist(request, catid, itmid):
             try:
                 in_wishlist = Wishlist.objects.get(user=user, cloth_item=clothitem)
                 if in_wishlist:
+                    print("already")
                     return JsonResponse({'message': 'item already in wishlist'})
                 else:
                     Wishlist.objects.create(user=user, cloth_item=clothitem)
@@ -125,8 +175,10 @@ def add_to_wishlist(request, catid, itmid):
 
             wishlist_items = Wishlist.objects.filter(user=user)
             wishlist_html = render_to_string('wishlist_items.html', {'wishlist': wishlist_items})
+            print("added")
             return JsonResponse({'message': 'success', 'wishlist_html': wishlist_html})
         else:
+            print("failed")
             return JsonResponse({'message': 'Failed'}, status=400)
     else:
         return redirect('/home')
@@ -266,7 +318,6 @@ def show_order(request):
             selected_size = request.POST.get('size_id')
             request.session['size'] = selected_size
             in_stock = request.POST.get('in_stock')
-            print(in_stock)
             if in_stock is not None:
                 if selected_size is None:
                     messages.error(request, 'Please select size')
@@ -289,32 +340,28 @@ def show_order(request):
                 quantity = request.POST.get(f'quantity_{i}')
                 size_id = request.POST.get(f'size_{i}')
 
-                print(item_id,quantity,size_id)
-
                 if item_id and size_id:
                     item = ClothItems.objects.get(item_id=item_id)
-                    size = Size.objects.get(sizes =size_id)
+                    size = Size.objects.get(sizes=size_id)
                     image = ItemImages.objects.filter(cloth_item=item).first()
-                    print(item,size,image)
                     items_data.append({
                         'item': item,
                         'size': size,
                         'quantity': quantity,
                         'image': image
                     })
-                    print(items_data)
+
             context = {
                 'user': user,
                 'items_data': items_data,
                 'quantity_range': range(1, 6),
-                'cart_items':cart_items
+                'cart_items': cart_items
             }
             return render(request, 'user-order.html', context)
         return redirect(request.META.get('HTTP_REFERER'))
 
     else:
         return redirect('/userlogin')
-
 
 
 def show_cart(request):
@@ -348,7 +395,7 @@ def show_user_profile(request):
     state = State.objects.all().order_by('state_name')
     print('hi')
     print(user)
-    order_items = OrderItems.objects.filter(order__user_id = user.user_id)
+    order_items = OrderItems.objects.filter(order__user_id=user.user_id)
     print(order_items)
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -384,7 +431,7 @@ def show_user_profile(request):
                                                  "wishlist": wishlist,
                                                  "district": district,
                                                  "state": state,
-                                                 "orderitems":order_items})
+                                                 "orderitems": order_items})
 
 
 def change_profile_pic(request):
@@ -484,6 +531,7 @@ def update_address(request):
     # In case of GET request or other method, redirect to some default page or handle errors
     return redirect('default_page')
 
+
 # def confirm_order(request):
 #     username = request.session['username']
 #     user = User.objects.get(username = username)
@@ -521,14 +569,14 @@ def update_address(request):
 #         return render(request,'order-confirm.html')
 
 
+from django.conf import settings
+
+
 def confirm_order(request):
     username = request.session['username']
     user = User.objects.get(username=username)
     cart_items = Cart.objects.filter(user=user.user_id)
-    print("hey")
-    print(cart_items)
     if request.method == 'POST':
-        # Initialize the order instance
         order_instance = Order(
             user=user,
             status='pending',
@@ -537,42 +585,40 @@ def confirm_order(request):
         )
         order_instance.save()
 
-        # Retrieve all item details from the form
         items = []
         item_names = request.POST.getlist('clothname')
         sizes = request.POST.getlist('size')
         prices = request.POST.getlist('price')
         quantities = request.POST.getlist('quantity')
 
-        print("Cloth Names:", item_names)
-        print("Sizes:", sizes)
-        print("Prices:", prices)
-        print("Quantities:", quantities)
-
         total_order_price = 0
 
         for item_name, item_size, item_price, item_quantity in zip(item_names, sizes, prices, quantities):
-            print('hi')
-            print(item_name,item_size,item_price,item_quantity)
             item = ClothItems.objects.get(item_name=item_name)
             item_size_obj = Size.objects.get(sizes=item_size)
             item_total_price = int(item_quantity) * int(item_price)
 
-            # Update total order price
+            # update total price
             total_order_price += item_total_price
 
-            # Create OrderItems instance for each item
-            order_item_instance = OrderItems(
+            # reduce the count of stock from cloth item
+            item.stock = int(item.stock) - int(item_quantity)
+
+            order_item_instance = OrderItems.objects.create(
                 order=order_instance,
                 cloth_item=item,
                 size=item_size_obj,
                 quantity=int(item_quantity),
                 price=int(item_price),
-                total_price=item_total_price
+                total_price=item_total_price,
+                status= 'pending'
             )
-            order_item_instance.save()
 
-            # Add item to the items list
+
+            #order_id passing
+            order_id = order_instance.order_id
+
+            # add item to the items list
             items.append({
                 'item_name': item.item_name,
                 'size': item_size,
@@ -580,9 +626,64 @@ def confirm_order(request):
                 'price': item_price
             })
 
-        # Update the total price in the order instance
+        # update the total price in order instance
         order_instance.total_price = total_order_price
         order_instance.save()
 
-        # Pass the items list to the template
-        return render(request, 'order-confirm.html', {'items': items,'cart_items':cart_items})
+        # payment
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        razorpay_order = client.order.create({
+            'amount': total_order_price * 100,
+            'currency': 'INR',
+            'payment_capture': '1'
+        })
+        razorpay_order_id = razorpay_order['id']
+        razorpay_order['name'] = user.user_id
+        razorpay_order['order'] = order_instance.order_id
+        price = razorpay_order['amount']
+
+        PaymentModel.objects.create(
+            user=user, order=order_instance, razorpay_order_id=razorpay_order_id, amount=price)
+
+        return render(request, 'order-summary.html', {'items': items,
+                                                      'cart_items': cart_items,
+                                                      'payment': razorpay_order, 'username': username,
+                                                      'order_id': order_id})
+
+
+@csrf_exempt
+def payment_handler(request, order, user):
+    order_id = Order.objects.get(order_id=order)
+    user = User.objects.get(user_id=user)
+
+    if request.method == 'POST':
+        payment_id = request.POST.get('razorpay_payment_id')
+        razorpay_order_id = request.POST.get('razorpay_order_id')
+        razorpay_signature = request.POST.get('razorpay_signature')
+        try:
+            # username = request.session.get('username')
+            # user = User.objects.get(username=username)
+            # order = Order.objects.get(order_id=order_id)
+
+            payment = PaymentModel(
+                user=user,
+                order=order_id,
+                razorpay_order_id=razorpay_order_id,
+                razorpay_id=payment_id,
+                paid=True
+            )
+            payment.save()
+
+            return render(request, 'order-confirm.html', {'payment_id': payment_id})
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return HttpResponseBadRequest("Invalid payment request")
+
+
+def delete_order_item(request, id, orderid):
+    if request.method == 'POST':
+        item = OrderItems.objects.get(cloth_item=id, order_items_id=orderid)
+        item.status = 'cancelled'
+        item.save()
+    return redirect('/user-profile')

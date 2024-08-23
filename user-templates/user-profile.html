@@ -12,7 +12,7 @@
     <div class="inner-div container mt-5">
         <div class="row mb-5">
             <!-- First Main Div -->
-            <div class="col-12 col-md-4 text-center" style="background: linear-gradient(45deg, #b43a3a, transparent);
+            <div class="col-12 col-md-4 text-center" style="background-color: #f8f9fa;
     border-radius: 2%">
                 <!-- Profile Image -->
                 <div class="img-container">
@@ -41,22 +41,22 @@
                         <div class="form-group row">
                             <div class="col-md-6 mb-3">
                                 <label for="firstname">First Name</label>
-                                <input type="text" class="form-control" value="{{user.firstname}}" name="firstname" placeholder="First Name">
+                                <input id="firstname" type="text" class="form-control" value="{{user.firstname}}" name="firstname" placeholder="First Name">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="secondname">Second Name</label>
-                                <input type="text" class="form-control" value="{{user.secondname}}" name="secondname" placeholder="Second Name">
+                                <input id="secondname" type="text" class="form-control" value="{{user.secondname}}" name="secondname" placeholder="Second Name">
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <div class="col-md-6 mb-3">
                                 <label for="email">Email</label>
-                                <input type="email" class="form-control" value="{{user.email}}" name="email" placeholder="Email">
+                                <input id="email" type="email" class="form-control" value="{{user.email}}" name="email" placeholder="Email">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="phno">Phone No</label>
-                                <input type="text" class="form-control" value="{{user.ph_no}}" name="phno" placeholder="Phone No">
+                                <input id="phno" type="text" class="form-control" value="{{user.ph_no}}" name="phno" placeholder="Phone No">
                             </div>
                         </div>
 
@@ -86,18 +86,18 @@
                         <div class="form-group row">
                             <div class="col-md-6 mb-3">
                                 <label for="pincode">Pincode</label>
-                                <input type="text" class="form-control" value="{{user.my_address.first.pin_code}}" name="pincode" placeholder="Pincode">
+                                <input id="pincode" type="text" class="form-control" value="{{user.my_address.first.pin_code}}" name="pincode" placeholder="Pincode">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="address">Permanent Address</label>
-                                <input type="text" class="form-control" value="{{user.my_address.first.address}}" name="address" placeholder="Address">
+                                <input id="address" type="text" class="form-control" value="{{user.my_address.first.address}}" name="address" placeholder="Address">
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <div class="col-md-6 mb-3">
                                 <label for="gender">Gender</label>
-                                <select name="gender" class="form-control">
+                                <select id="gender" name="gender" class="form-control">
                                     <option value="{{user.gender}}" disabled selected>Choose gender</option>
                                     {% for choice in gender_choices %}
                                     <option value="{{ choice.0 }}">{{ choice.1 }}</option>
@@ -106,14 +106,14 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="dob">Date of Birth</label>
-                                <input type="date" class="form-control" value="{{user.dob}}" name="dob" placeholder="Date of Birth">
+                                <input id="dob" type="date" class="form-control" value="{{user.dob}}" name="dob" placeholder="Date of Birth">
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <div class="col-md-6 mb-3">
                                 <label for="language">Language</label>
-                                <input type="text" class="form-control" value="{{user.language}}" name="language" placeholder="Language">
+                                <input id="language" type="text" class="form-control" value="{{user.language}}" name="language" placeholder="Language">
                             </div>
                         </div>
 
@@ -146,7 +146,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{i.cloth_item.item_name}}</h5>
                                 <p class="card-text text-truncate">{{i.cloth_item.description}}</p>
-                                <a href="#" class="btn btn-primary">View Details</a>
+                                <a href="/{{i.cloth_item.category.category_name}}/{{i.cloth_item.item_id}}" class="btn btn-primary">View Details</a>
                             </div>
                         </div>
                     </div>
@@ -155,13 +155,13 @@
             </div>
             <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
                 <div class="row">
-
+                {% if orderitems %}
                     {% for order in orderitems %}
-
+                {% if order.status == 'pending' or order.status == 'processed' %}
                     <div class="pt-0 pb-0 ps-4 pe-4  mb-4 border pt-2">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <a href="/{{i.cloth_item.category.category_name}}/{{i.cloth_item.item_id}}" class="text-dark text-decoration-none flex-grow-1">{{order.cloth_item.item.name}}</a>
-                        <form method="post" action="/deletefromcart/{{i.cloth_item.item_id}}">
+                        <form method="post" action="delete-ordered-item/{{order.cloth_item.item_id}}/{{order.order_items_id}}">
                             {% csrf_token %}
                             <button type="submit" class="text-danger p-1" aria-label="remove">
                                cancel order x
@@ -176,17 +176,20 @@
                         <div class="flex-grow-1">
                             <p class="mb-1">Size: {{order.size}}</p>
                             <p class="mb-1">Color: Beige green</p>
-                            {% if i.cloth_item.stock >= 1 %}
-                            <p class="mb-3 text-success">In stock</p>
-                            {% else %}
-                            <p class="mb-3 text-danger">Out of stock</p>
-                            {% endif %}
+                              {% if i.cloth_item.stock >= 11 %}
+                                   <span class="ms-5 text-success">Instock</span>
+                              {% elif i.cloth_item.stock >= 1 and i.stock <= 10 %}
+                                   <span class="ms-3 text-warning">only few left</span>
+                              {% elif clothitem.stock == 0 %}
+                                   <span class="ms-3 text-danger">Out of Stock</span>
+                              {% endif %}
+
                             <div class="d-flex justify-content-between">
                                 <div class="row">
                                     <p class="col-12">MRP: {{order.price}}</p>
                                 </div>
                                 <div>
-                                    <p class="text-success">Status: {{order.order.status}}</p>
+                                    <p class="text-success">Status: {{order.status}}</p>
                                 </div>
                                 <div>
                                    <p>Qty: {{order.quantity}}</p>
@@ -199,8 +202,52 @@
                         </div>
                     </div>
                 </div>
+            {% else %}
 
+                    <div class="pt-0 pb-0 ps-4 pe-4  mb-4 border pt-2">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <a href="/{{order.cloth_item.category.category_name}}/{{i.cloth_item.item_id}}" class="text-dark text-decoration-none flex-grow-1">{{order.cloth_item.item_name}}</a>
+                        <span>Cancelled</span>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <img src="{{order.cloth_item.images.first.image_url.url}}" alt="Polo shirt" class="img-fluid" style="width: 100px;">
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-1">Size: {{order.size}}</p>
+                            <p class="mb-1">Color: Beige green</p>
+                              {% if i.cloth_item.stock >= 11 %}
+                                   <span class="ms-5 text-success">Instock</span>
+                              {% elif i.cloth_item.stock >= 1 and i.stock <= 10 %}
+                                   <span class="ms-3 text-warning">only few left</span>
+                              {% elif clothitem.stock == 0 %}
+                                   <span class="ms-3 text-danger">Out of Stock</span>
+                              {% endif %}
+
+                            <div class="d-flex justify-content-between">
+                                <div class="row">
+                                    <p class="col-12">MRP: {{order.price}}</p>
+                                </div>
+                                <div>
+                                    <p class="text-danger">Status: {{order.status}}</p>
+                                </div>
+                                <div>
+                                   <p>Qty: {{order.quantity}}</p>
+                                </div>
+                                <div>
+                                    <p class="mb-1">Total</p>
+                                    <p><b>MRP:</b> {{order.total_price}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
                     {% endfor %}
+                    {% else %}
+                    <div class="p-5"><h5>you haven't ordered anything yet!</h5></div>
+                    {% endif %}
                 </div>
             </div>
         </div>

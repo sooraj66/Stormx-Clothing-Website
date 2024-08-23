@@ -1,5 +1,8 @@
 from django.db import models
 from AdminApp.models import ClothItems,District,Size
+from django.utils import timezone
+from datetime import timedelta
+import random
 
 # Create your models here.
 class User(models.Model):
@@ -19,6 +22,27 @@ class User(models.Model):
     ph_no = models.CharField(max_length=20, null=True)
     signup_date = models.DateField(auto_now_add=True)
     status = models.CharField(max_length=10, default='active')
+
+
+class OTP(models.Model):
+    mail = models.EmailField(unique=True,null=True)
+    otp = models.CharField(max_length=6, null=True, blank=True)
+    otp_expiration = models.DateTimeField(null=True, blank=True)
+
+    def generate_otp(self,mail):
+        self.otp = str(random.randint(100000, 999999))
+        self.mail = mail
+        self.otp_expiration = timezone.now() + timedelta(minutes=10)  # OTP valid for 10 minutes
+        self.save()
+
+    def verify_otp(self, otp):
+        if self.otp == otp and timezone.now() < self.otp_expiration:
+            self.mail = None
+            self.otp = None
+            self.otp_expiration = None
+            self.save()
+            return True
+        return False
 
 
 class Address(models.Model):
@@ -54,11 +78,12 @@ class Order(models.Model):
 class OrderItems(models.Model):
     order_items_id = models.AutoField(primary_key = True)
     order = models.ForeignKey(Order,on_delete=models.CASCADE)
-    cloth_item = models.ForeignKey(ClothItems,on_delete=models.CASCADE)
+    cloth_item = models.ForeignKey(ClothItems,on_delete=models.CASCADE,related_name='orderitem')
     size = models.CharField(max_length=10,null=True)
     quantity = models.IntegerField()
     price = models.IntegerField()
     total_price = models.IntegerField()
+    status = models.CharField(max_length=20,null=True)
 
 
 
@@ -68,3 +93,13 @@ class Review(models.Model):
     cloth_item = models.ForeignKey(ClothItems, on_delete=models.CASCADE)
     rating = models.IntegerField()
     review_text = models.TextField()
+
+
+class PaymentModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    amount = models.CharField(max_length=100)
+    razorpay_order_id = models.CharField(max_length=100, null=True, blank=True)
+    razorpay_id = models.CharField(max_length=100, blank=True)
+    paid = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)

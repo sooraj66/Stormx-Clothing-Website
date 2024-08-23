@@ -18,13 +18,14 @@
                               <p class="card-text text-truncate">{{i.cloth_item.description}}</p>
                               <p><b>Rs:{{i.cloth_item.price}}</b>
 
-                                  {% if i.cloth_item.stock > 20 %}
+                                  {% if i.cloth_item.stock >= 11 %}
                                        <span class="ms-5 text-success">Instock</span>
-                                  {% elif i.cloth_item.stock > 10 and i.stock < 20 %}
+                                  {% elif i.cloth_item.stock >= 1 and i.stock <= 10 %}
                                        <span class="ms-3 text-warning">only few left</span>
-                                  {% else %}
+                                  {% elif clothitem.stock == 0 %}
                                        <span class="ms-3 text-danger">Out of Stock</span>
                                   {% endif %}
+
 
                               </p>
                             </div>

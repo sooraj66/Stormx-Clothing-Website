@@ -14,7 +14,7 @@
                                 <button type="submit" class="btn bg-primary text-white col-12" name="viewAll" value="">View All</button>
                             </form>
                         {% for i in category %}
-                            <form action="/category/{{i.category_id}}" method="post" class="col-1 p-0">
+                            <form action="/first/category/{{i.category_id}}" method="post" class="col-1 p-0">
                                 {% csrf_token %}
                                 <button type="submit" class="btn bg-primary text-white col-12" value="{{i.category_id}}">{{i.category_name}}</button>
                             </form>

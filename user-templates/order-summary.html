@@ -1,0 +1,57 @@
+{% extends 'header.html' %}
+{% load static %}
+
+{% block title %}Order Summary{% endblock %}
+
+{% block content %}
+<div class="container p-5">
+    <div class="div" style="margin-top:7rem;">
+
+            <h1>payment_amount : {{payment.amount}}</h1>
+            <h1>payment_id : {{payment.id}}</h1>
+            <h1>order_id : {{order_id}}</h1>
+
+            <input type="hidden" name="order_id" value="{{order_id}}">
+            <button type="submit" id="rzp-button1">Pay</button>
+
+
+    </div>
+</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+    "key": "rzp_test_Hr7B8bx0zVnGz0",
+    "amount": "{{payment.amount}}",
+    "currency": "INR",
+    "name": "STORMx", //your business name
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": "{{payment.id}}",
+    "callback_url": "http://127.0.0.1:8000/payment_handler/{{payment.order}}/{{payment.name}}",
+    "handler": function (response){
+                            console.log('Success');
+                            var paymentId = response.razorpay_payment_id;
+                            var orderId = response.razorpay_order_id;
+                            var price = "{{payment.amount}}";
+                            var signature = response.razorpay_signature;
+                            alert(`Payment of ${price} with ${paymentId} of order ${orderId} is successful!`)
+                        },
+    "prefill": {
+        "name": "Gaurav Kumar", //your customer's name
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000" //Provide the customer's phone number for better conversion rates
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
+{% endblock %}
